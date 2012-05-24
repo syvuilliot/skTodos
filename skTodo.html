@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="../dijit/themes/claro/claro.css" />
+    <meta charset="utf-8">
+    <title>SkTodos</title>
+</head>
+<body class="claro">
+	<div id="app"></div>
+    <script data-dojo-config="async: 1, isDebug: 1"
+            src="../dojo/dojo.js"></script>
+    <script>
+		require([
+			"sktodos/MainComponent",
+		], function(MainComponent){
+			var app = new MainComponent({}, "app");
+			app.startup();
+			
+		});
+	</script>
+</body>
+</html>
