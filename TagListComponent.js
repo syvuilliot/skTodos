@@ -3,7 +3,7 @@
 	"dojo/_base/lang",
 	"dijit/_WidgetBase",
 	"dojo/Evented",
-	"SkFramework/Controller/_ListRenderer",
+	"SkFramework/controller/_ListRenderer",
 	"dijit/_Container",
 	"./TagComponent",
 ], function(declare, lang, Widget, Evented, _ListRenderer, _Container, TagComponent){

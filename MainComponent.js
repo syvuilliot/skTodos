@@ -2,7 +2,7 @@
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dijit/_WidgetBase",	"dojo/Evented",	"dijit/_TemplatedMixin", "dijit/_WidgetsInTemplateMixin",
-	"./mainController",
+	"./MainController",
 	"./TodoListComponent",
 	"./TagListComponent",
 	"dojo/text!./mainComponent.html",
