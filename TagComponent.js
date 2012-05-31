@@ -12,9 +12,9 @@ define([
 	Widget,				Evented,		Templated,				WidgetsInTemplate,
 	template
 ){
-	return declare([Widget, Evented, Templated, WidgetsInTemplate], {
+	return declare([Widget, /*Evented,*/ Templated, WidgetsInTemplate], {
 		templateString: template,
-		startup: function(){
+		postCreate: function(){
 			this.inherited(arguments);
 			//remove
 			this.removeButton.on("click", function(){
@@ -22,10 +22,10 @@ define([
 			}.bind(this));
 			//update label
 			this.labelWidget.on("change", function(ev){
-				this.emit("updateLabel", {tag: this.tag, label: this.labelWidget.get("value")});
+				this.emit("update-label", {tag: this.tag, label: this.labelWidget.get("value")});
 			}.bind(this));
 			this.checkWidget.on("change", function(ev){
-				this.emit("updateSelected", {tag: this.tag, selected: this.checkWidget.get("checked")});
+				this.emit("update-selected", {tag: this.tag, selected: this.checkWidget.get("checked")});
 			}.bind(this));
 		},
 		_setTagAttr: function(tag){

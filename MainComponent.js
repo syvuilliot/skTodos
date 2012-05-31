@@ -1,50 +1,102 @@
 ﻿define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"dijit/_WidgetBase",	"dojo/Evented",	"dijit/_TemplatedMixin", "dijit/_WidgetsInTemplateMixin",
-	"./MainController",
-	"./TodoListComponent",
-	"./TagListComponent",
-	"dojo/text!./mainComponent.html",
-	"dijit/form/TextBox",
+	"./models",
+	"SkFramework/widgets/Widget",
+	"SkFramework/widgets/NewList",
+	"./GetLabelComponent",
+	"./TodoComponent",
+	"./TagComponent",
 ], function(
 	declare,
 	lang,
-	Widget,				Evented,			Templated,				WidgetsInTemplate,
-	MainController,
-	TodoListComponent,
-	TagListComponent,
-	template
+	models,
+	Widget,
+	List,
+	GetLabelComponent,
+	TodoComponent,
+	TagComponent
 ){
-	return declare([Widget, Evented, Templated, WidgetsInTemplate, MainController], {
-		templateString: template,
+	var Tag = models.Tag;
+	var Todo = models.Todo;
+
+	return declare(Widget, {
+		children: {
+			newTag: {
+				type: GetLabelComponent,
+				params: {defaultValue: "new tag"},
+				events: {"new-label": "createTag"},
+			},
+			tagsList: {
+				type: List,
+				params: {
+					itemPropName: "tag",
+					itemViewType: TagComponent,
+					itemViewParams: {},
+					//items: this.getTags(),
+				},
+				events: {
+					"remove": "tagRemove",
+					"update-label": "tagUpdateLabel",
+					"update-selected": "tagUpdateSelected",
+				},
+			},
+			newTodo: {
+				type: GetLabelComponent,
+				params: {defaultValue: "new todo"},
+				events: {"new-label": "createTodo"},
+			},
+			todoList: {
+				type: List,
+				params: {
+					itemPropName: "todo",
+					itemViewType: TodoComponent,
+					itemViewParams: {},
+				},
+				events: {
+					"remove": "todoRemove",
+					"update-label": "todoUpdateLabel",
+					"update-done": "todoUpdateDone",
+				},
+			},
+		},
+		models: models,
+		constructor: function(){
+			this.tagsState = [];
+		},
 		startup: function(){
 			this.inherited(arguments);
-			//new tag
-			this.newTag.on("change", function(e){
-				this.createTag({label: this.newTag.get("value")});
-				this.newTag.set("value", "", false);
-			}.bind(this));
-			//tag list
-			this.tagList = new TagListComponent({
-				items: this.getTags(),
-			}, this.tagListNode);
-			this.tagList.startup();
-			//this.tagList.on("tagRemove", this.tagRemove);
-			this.tagList.on("tagUpdateLabel", this.tagUpdateLabel.bind(this));
-			this.tagList.on("tagUpdateSelected", this.tagUpdateSelected.bind(this));		
-			//new todo
-			this.newTodo.on("change", function(e){
-				this.createTodo({label: this.newTodo.get("value")});
-				this.newTodo.set("value", "", false);
-			}.bind(this));
-			this.todoList = new TodoListComponent({
-				// items: this.getTodos(),
-			}, this.todoListNode);
-			this.todoList.startup();
-			this.todoList.on("todoRemove", this.todoRemove.bind(this));
-			this.todoList.on("todoUpdateLabel", this.todoUpdateLabel.bind(this));
-			this.todoList.on("todoUpdateDone", this.todoUpdateDone.bind(this));
+			this.getChild("tagsList").set("items", this.getTags());
+		},
+		//get all tags from the app store
+		getTags: function(){
+			return Tag.query({});
+		},
+		//get tags selected by user
+		getTagsState: function(){
+			return this.tagsState;
+		},
+		getTodos: function(){
+			//return Todo.query({});
+			var firstTagSelected = this.getTagsState()[0];
+			return firstTagSelected && firstTagSelected.get("todos") || [];
+		},
+		createTodo: function(params){
+			var newTodo = new Todo({
+				label: params.label,
+			});
+			//TODO: add tags from tagsState to the new todo
+			this.getTagsState().forEach(function(tag){
+				newTodo.add("tags", tag);
+			});
+			
+			newTodo.save();
+		},
+		createTag: function(params){
+			var newTag = new Tag({
+				label: params.label,
+			});
+			newTag.save();
 		},
 		todoRemove: function(ev){
 			ev.todo.remove();
@@ -57,6 +109,9 @@
 			ev.todo.set("done", ev.done);
 			ev.todo.save();
 		},
+		tagRemove: function(ev){
+			ev.tag.remove();
+		},
 		tagUpdateLabel: function(ev){
 			ev.tag.set("label", ev.label);
 			ev.tag.save();
@@ -68,7 +123,7 @@
 			if (ev.selected === false && this.tagsState.indexOf(ev.tag) != -1){
 				this.tagsState.splice(this.tagsState.indexOf(ev.tag), 1);
 			}
-			this.todoList.set("items", this.getTodos());
-		}
+			this.getChild("todoList").set("items", this.getTodos());
+		},
 	});
 });

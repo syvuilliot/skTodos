@@ -16,7 +16,7 @@ define([
 	//todoController,
 	template
 ){
-	return declare([Widget, Evented, Templated, WidgetsInTemplate], {
+	return declare([Widget, /*Evented,*/ Templated, WidgetsInTemplate], {
 		templateString: template,
 		startup: function(){
 			this.inherited(arguments);
@@ -28,10 +28,10 @@ define([
 			}.bind(this));
 			//update label
 			this.labelWidget.on("change", function(ev){
-				this.emit("updateLabel", {todo: this.todo, label: this.labelWidget.get("value")});
+				this.emit("update-label", {todo: this.todo, label: this.labelWidget.get("value")});
 			}.bind(this));
 			this.checkWidget.on("change", function(ev){
-				this.emit("updateDone", {todo: this.todo, done: this.checkWidget.get("checked")});
+				this.emit("update-done", {todo: this.todo, done: this.checkWidget.get("checked")});
 			}.bind(this));
 		},
 		_setTodoAttr: function(todo){

@@ -13,7 +13,7 @@
 		require([
 			"sktodos/MainComponent",
 		], function(MainComponent){
-			var app = new MainComponent({}, "app");
+			window.app = new MainComponent({}, "app");
 			app.startup();
 			
 		});
