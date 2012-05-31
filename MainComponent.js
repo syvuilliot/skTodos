@@ -20,7 +20,7 @@
 	var Tag = models.Tag;
 	var Todo = models.Todo;
 
-	return declare(Widget, {
+	var SkTodoApp = declare(Widget, {
 		children: {
 			newTag: {
 				type: GetLabelComponent,
@@ -33,7 +33,6 @@
 					itemPropName: "tag",
 					itemViewType: TagComponent,
 					itemViewParams: {},
-					//items: this.getTags(),
 				},
 				events: {
 					"remove": "tagRemove",
@@ -51,10 +50,15 @@
 				params: {
 					itemPropName: "todo",
 					itemViewType: TodoComponent,
-					itemViewParams: {},
+					itemViewParams: {
+/*						tagsAvailable: function(){
+							return SkTodoApp.getTags();
+						},
+*/					},
 				},
 				events: {
-					"remove": "todoRemove",
+					"remove-todo": "todoRemove",
+					"remove-tag": "todoTagRemove",
 					"update-label": "todoUpdateLabel",
 					"update-done": "todoUpdateDone",
 				},
@@ -109,6 +113,9 @@
 			ev.todo.set("done", ev.done);
 			ev.todo.save();
 		},
+		todoTagRemove: function(ev){
+			//TODO: ev.todo.remove("tags", ev.tag);
+		},
 		tagRemove: function(ev){
 			ev.tag.remove();
 		},
@@ -126,4 +133,6 @@
 			this.getChild("todoList").set("items", this.getTodos());
 		},
 	});
+
+	return SkTodoApp;
 });
