@@ -3,7 +3,6 @@ define([
 	"dojo/_base/lang",
 	"dojo/dom-construct",
 	"dijit/_WidgetBase", "dojo/Evented",	"dijit/_TemplatedMixin", "dijit/_WidgetsInTemplateMixin",
-	//"./todoController",
 	"dojo/text!./todoComponent.html",
 	"dijit/form/TextBox",
 	"dijit/form/Button",
@@ -13,7 +12,6 @@ define([
 	lang,
 	domConstruct,
 	Widget,				Evented,		Templated,				WidgetsInTemplate,
-	//todoController,
 	template
 ){
 	return declare([Widget, Evented, Templated, WidgetsInTemplate], {
@@ -22,9 +20,7 @@ define([
 			this.inherited(arguments);
 			//remove
 			this.removeButton.on("click", function(){
-				//what to do here ? call todo.remove() or send an event "remove" with the todo instance ?
-				// this.todo.remove();
-				this.emit("remove", {todo: this.todo});
+				this.emit("delete", {todo: this.todo});
 			}.bind(this));
 			//update label
 			this.labelWidget.on("change", function(ev){
