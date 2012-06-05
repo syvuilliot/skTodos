@@ -6,11 +6,11 @@
 	"SkFramework/store/SimpleQueryEngineGet",
 	"dojo/store/Observable",
 ], function(create, Model, LocalStorage, Constructor, SimpleQueryEngineGet, Observable){
-	var Tag = create(Model, function Tag(){
+	window.Tag = create(Model, function Tag(){
 		this.superConstructor.apply(this, arguments);
 	});
 	
-	var Todo = create(Model, function Todo(){
+	window.Todo = create(Model, function Todo(){
 		this.superConstructor.apply(this, arguments);
 	});
 	

@@ -2,33 +2,30 @@
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dijit/_WidgetBase",	"dojo/Evented",	"dijit/_TemplatedMixin",
-	"./MainController",
-	"./TodoListComponent",
 	"./TodoComponent",
 	"./TagListComponent",
+	"./TagSelector",
 	"dojo/text!./mainComponent.html",
 	"dijit/form/TextBox",
 	"./models",
-	"SkFramework/controller/_ListRenderer",
-	'dgrid/List'
+	"SkFramework/widgets/List",
+	//'dgrid/List'
 ], function(
 	declare,
 	lang,
 	Widget,				Evented,			Templated,
-	MainController,
-	TodoListComponent,
 	TodoComponent,
 	TagListComponent,
+	TagSelector,
 	template,
 	TextBox,
 	models,
-	_ListRenderer,
 	List
 ){
 	var Tag = models.Tag;
 	var Todo = models.Todo;
 	
-	return declare([Widget, Evented, Templated, _ListRenderer], {
+	return declare([Widget, Evented, Templated], {
 		templateString: template,
 		
 		postCreate: function(){
@@ -49,9 +46,14 @@
 			
 			//todo list
 			this.todoList = new List({
+				//for dgrid
 				renderRow: function(item) {
 					return this.addItem(item).domNode;
-				}.bind(this)
+				}.bind(this),
+				//for SkList
+				renderItem: function(item) {
+					return this.addItem(item);
+				}.bind(this),
 			}, this.todoListNode);
 			
 		},
@@ -64,12 +66,9 @@
 		},
 		
 		_setItemsAttr: function (items) {
-			if (items.length) {
-				this.todoList.renderArray(items);
-			}
-			else {
-				this.todoList.refresh();
-			}
+			// this.todoList.refresh();
+			// this.todoList.renderArray(items);
+			this.todoList.set("items", items);
 		},
 		
 		getTodos: function(){
@@ -90,8 +89,12 @@
 		},
 		
 		addItem: function(todo) {
+			var addTagCmp = new TagSelector({
+				tagModel: Tag,
+			});
 			var todoCmp = new TodoComponent({
-				todo: todo
+				todo: todo,
+				tagSelector: addTagCmp,
 			});
 			todoCmp.on('delete', this.todoDelete.bind(this));
 			todoCmp.on("udatelabel", this.todoUpdateLabel.bind(this));
@@ -102,7 +105,7 @@
 			child.destroyRecursive();
 		},
 		todoDelete: function(ev){
-			ev.todo.remove();
+			ev.todo.delete();
 		},
 		todoUpdateLabel: function(ev){
 			ev.todo.set("label", ev.label);
