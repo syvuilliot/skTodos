@@ -25,6 +25,8 @@
 	var Tag = models.Tag;
 	var Todo = models.Todo;
 	
+	//new Sync()
+	
 	return declare([Widget, Evented, Templated], {
 		templateString: template,
 		
@@ -80,12 +82,11 @@
 			var newTodo = new Todo({
 				label: params.label,
 			});
+			newTodo.save();
 			// add tags from tagsState to the new todo
 			this.getTagsState().forEach(function(tag){
-				newTodo.add("tags", tag);
+				newTodo.add("tags", tag).save();
 			});
-			
-			newTodo.save();
 		},
 		
 		addItem: function(todo) {

@@ -8,7 +8,7 @@ define([
 	Button,					TextBox
 ) {
 	return declare([Widget, Templated, _WidgetsInTemplateMixin, Evented], {
-		templateString: '<span><span data-dojo-type="dijit/form/TextBox" data-dojo-attach-point="selector"></span><button data-dojo-attach-point="validBtn">X</button></span>',
+		templateString: '<span><span data-dojo-type="dijit/form/TextBox" data-dojo-attach-point="selector"></span><button data-dojo-attach-point="validBtn">+</button></span>',
 
 		postCreate: function() {
 			this.inherited(arguments);
