@@ -9,7 +9,7 @@
 	"dijit/form/TextBox",
 	"./models",
 	"SkFramework/widgets/List",
-	//'dgrid/List'
+	'SkFramework/store/Mirror'
 ], function(
 	declare,
 	lang,
@@ -20,18 +20,23 @@
 	template,
 	TextBox,
 	models,
-	List
+	List,
+	Mirror
 ){
 	var Tag = models.Tag;
 	var Todo = models.Todo;
-	
-	//new Sync()
 	
 	return declare([Widget, Evented, Templated], {
 		templateString: template,
 		
 		postCreate: function(){
 			this.inherited(arguments);
+			
+			new Mirror({
+				local: Todo.store,
+				remote: googleTasks
+			});
+			
 			this.tagsState = [];
 			//tags list
 			this.tagList = new TagListComponent({
@@ -74,9 +79,9 @@
 		},
 		
 		getTodos: function(){
-			//return Todo.query({});
-			var firstTagSelected = this.getTagsState()[0];
-			return firstTagSelected && firstTagSelected.get("todos") || [];
+			return Todo.query({});
+			//var firstTagSelected = this.getTagsState()[0];
+			//return firstTagSelected && firstTagSelected.get("todos") || [];
 		},
 		todoCreate: function(params){
 			var newTodo = new Todo({

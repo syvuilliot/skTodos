@@ -7,15 +7,40 @@
 </head>
 <body class="claro">
 	<div id="app"></div>
+	<script src="https://apis.google.com/js/client.js"></script>
     <script data-dojo-config="async: 1, isDebug: 1"
             src="../dojo/dojo.js"></script>
     <script>
 		require([
 			"sktodos/MainComponent",
-		], function(MainComponent){
-			var app = new MainComponent({}, "app");
-			app.startup();
-			
+			'sktodos/GoogleJsonRest'
+		], function(
+			MainComponent,
+			GoogleStore
+		){
+			gapi.client.setApiKey('AIzaSyCj1J8O-T61hBkTfMwYnvL9WZsbidbMLF8');
+			gapi.auth.authorize({
+				client_id: '9770186770',
+				scope: 'https://www.googleapis.com/auth/tasks',
+				immediate: false
+			}, function() {
+				var token = gapi.auth.getToken();
+				window.googleTasks = new GoogleStore({
+					accessToken: token.access_token,
+					target: "https://www.googleapis.com/tasks/v1/lists/MDc2NzE2NzUyNTMzMDAzNzE0MDM6MDow/tasks/",
+					transformResult: function(result) {
+						return result.items.map(function(item) {
+							return new Todo({
+								label: item.title
+							});
+						})
+					}
+				});
+				
+				var app = new MainComponent({}, "app");
+				app.startup();
+				new Tag({label:"test"}).save();
+			});
 		});
 	</script>
 </body>
