@@ -13,33 +13,55 @@
     <script>
 		require([
 			"sktodos/MainComponent",
-			'sktodos/GoogleJsonRest'
+			"sktodos/models",
+			'sktodos/GoogleJsonRest',
+			"SkFramework/store/Sync",
+			"dojo/on",
 		], function(
 			MainComponent,
-			GoogleStore
+			models,
+			GoogleStore,
+			Sync,
+			on
 		){
 			gapi.client.setApiKey('AIzaSyCj1J8O-T61hBkTfMwYnvL9WZsbidbMLF8');
 			gapi.auth.authorize({
 				client_id: '9770186770',
 				scope: 'https://www.googleapis.com/auth/tasks',
-				immediate: false
+				immediate: true,
 			}, function() {
 				var token = gapi.auth.getToken();
 				window.googleTasks = new GoogleStore({
 					accessToken: token.access_token,
 					target: "https://www.googleapis.com/tasks/v1/lists/MDc2NzE2NzUyNTMzMDAzNzE0MDM6MDow/tasks/",
-					transformResult: function(result) {
+					transformQueryResult: function(result) {
 						return result.items.map(function(item) {
-							return new Todo({
-								label: item.title
-							});
+							item.label = item.title;
+							delete item.title;
+							return new Todo(item);
 						})
-					}
+					},
+					transformGetResult: function(item) {
+						item.label = item.title;
+						delete item.title;
+						return new Todo(item);
+					},
+					transformItem: function(item){
+						item.title = item.label;
+						return item;
+					},
+
 				});
+				var todoStore = models.Todo.store;
+				models.Todo.store = Sync(todoStore, googleTasks);
 				
-				var app = new MainComponent({}, "app");
+				var app = new MainComponent({
+					models: models,
+				}, "app");
 				app.startup();
-				new Tag({label:"test"}).save();
+				models.Todo.store.sync();
+				app.on("sync", function(){models.Todo.store.sync();});
+				//new Tag({label:"test"}).save();
 			});
 		});
 	</script>

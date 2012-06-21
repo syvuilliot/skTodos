@@ -1,14 +1,38 @@
 define([
-	'dojo/_base/declare',	'dojo/_base/xhr',
+	'dojo/_base/declare',	'dojo/_base/xhr', 'dojo/_base/Deferred',
 	'dojo/store/JsonRest'
 ], function(
-	declare,				xhr,
+	declare,				xhr,			Deferred,
 	JsonRest
 ) {
 	return declare([JsonRest], {
 		accepts: "application/javascript, application/json",
 		accessToken: null, 
 		
+		get: function(id, options){
+			//	summary:
+			//		Retrieves an object by its identity. This will trigger a GET request to the server using
+			//		the url `this.target + id`.
+			//	id: Number
+			//		The identity to use to lookup the object
+			//	returns: Object
+			//		The object in the store that matches the given id.
+			var headers = {
+				'Authorization': 'Bearer ' + this.accessToken,
+				"Content-Type": "application/json",
+				"Accept": this.accepts
+			};
+
+			var def = new Deferred();
+			xhr("GET", {
+				url:this.target + id,
+				handleAs: "json",
+				headers: headers
+			}).then(function(item){def.resolve(this.transformGetResult(item));}.bind(this));
+
+			return def;
+		},
+
 		put: function(object, options){
 			// summary:
 			//		Stores an object. This will trigger a PUT request to the server
@@ -19,6 +43,7 @@ define([
 			//		Additional metadata for storing the data.  Includes an "id"
 			//		property if a specific id is to be used.
 			//	returns: Number
+			object = this.transformItem(object);
 			options = options || {};
 			var id = ("id" in options) ? options.id : this.getIdentity(object);
 			var hasId = typeof id != "undefined";
@@ -61,7 +86,7 @@ define([
 			results.forEach = function(callback) {
 				var args = arguments;
 				return results.then(function(result){
-					return that.transformResult(result).forEach(callback);
+					return that.transformQueryResult(result).forEach(callback);
 				});
 			};
 			

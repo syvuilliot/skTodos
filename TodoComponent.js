@@ -35,10 +35,10 @@ define([
 			}.bind(this));
 			//update label
 			this.labelWidget.on("change", function(ev){
-				this.emit("updateLabel", {todo: this.todo, label: this.labelWidget.get("value")});
+				this.emit("updatelabel", {todo: this.todo, label: this.labelWidget.get("value")});
 			}.bind(this));
 			this.checkWidget.on("change", function(ev){
-				this.emit("updateDone", {todo: this.todo, done: this.checkWidget.get("checked")});
+				this.emit("updatedone", {todo: this.todo, done: this.checkWidget.get("checked")});
 			}.bind(this));
 			this.tagSelector.on('tagselected', function(ev) {
 				this.todo.add('tags', ev.tag);

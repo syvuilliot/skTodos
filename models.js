@@ -34,15 +34,15 @@
 		return this.get("tagsRelations").map(function(item){return item.get("tag");});
 	};
 	Tag.prototype.gettodos = function(){
-		var transform = function(item){return item.get("todo");}
+		var transform = function(item){return item.get("todo");};
 		var relQueryResult = this.get("todosRelations");
 		var results = relQueryResult.map(transform);
 		results.observe = function(callback) {
 			var relCallback = function(item, from, to) {
 				callback(transform(item), from, to);
-			}
+			};
 			return relQueryResult.observe(relCallback);
-		}
+		};
 		return results;
 	};
 	Todo.prototype.addtags = function(tag, options){

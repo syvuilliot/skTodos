@@ -2,29 +2,27 @@
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dijit/_WidgetBase",	"dojo/Evented",	"dijit/_TemplatedMixin",
+	"dojo/on",
 	"./TodoComponent",
 	"./TagListComponent",
 	"./TagSelector",
 	"dojo/text!./mainComponent.html",
 	"dijit/form/TextBox",
-	"./models",
 	"SkFramework/widgets/List",
 	'SkFramework/store/Mirror'
 ], function(
 	declare,
 	lang,
 	Widget,				Evented,			Templated,
+	on,
 	TodoComponent,
 	TagListComponent,
 	TagSelector,
 	template,
 	TextBox,
-	models,
 	List,
 	Mirror
 ){
-	var Tag = models.Tag;
-	var Todo = models.Todo;
 	
 	return declare([Widget, Evented, Templated], {
 		templateString: template,
@@ -32,11 +30,11 @@
 		postCreate: function(){
 			this.inherited(arguments);
 			
-			new Mirror({
+/*			new Mirror({
 				local: Todo.store,
 				remote: googleTasks
 			});
-			
+*/			
 			this.tagsState = [];
 			//tags list
 			this.tagList = new TagListComponent({
@@ -63,6 +61,8 @@
 				}.bind(this),
 			}, this.todoListNode);
 			
+			//sync button
+			on(this.syncNode, "click", function(){this.emit("sync");}.bind(this));
 		},
 		
 		startup: function(){
@@ -103,7 +103,7 @@
 				tagSelector: addTagCmp,
 			});
 			todoCmp.on('delete', this.todoDelete.bind(this));
-			todoCmp.on("udatelabel", this.todoUpdateLabel.bind(this));
+			todoCmp.on("updatelabel", this.todoUpdateLabel.bind(this));
 			todoCmp.on("updatedone", this.todoUpdateDone.bind(this));
 			return todoCmp;
 		},
