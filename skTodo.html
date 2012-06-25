@@ -35,20 +35,27 @@
 					accessToken: token.access_token,
 					target: "https://www.googleapis.com/tasks/v1/lists/MDc2NzE2NzUyNTMzMDAzNzE0MDM6MDow/tasks/",
 					transformQueryResult: function(result) {
-						return result.items.map(function(item) {
-							item.label = item.title;
-							delete item.title;
-							return new Todo(item);
+						return result.items.map(this.toInstance)
+					},
+					toInstance: function(object) {
+						var params = {};
+						Object.keys(object).forEach(function(key){
+							switch(key){
+								case "title": params.label = object[key]; break;
+								default: params[key] = object[key];
+							}							
 						})
+						return new Todo(params);
 					},
-					transformGetResult: function(item) {
-						item.label = item.title;
-						delete item.title;
-						return new Todo(item);
-					},
-					transformItem: function(item){
-						item.title = item.label;
-						return item;
+					fromInstance: function(item){
+						var object = {};
+						Object.keys(item).forEach(function(key){
+							switch(key){
+								case "label": object.title = item[key]; break;
+								default: object[key] = item[key];
+							}							
+						})
+						return object;
 					},
 
 				});

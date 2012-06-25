@@ -28,7 +28,9 @@ define([
 				url:this.target + id,
 				handleAs: "json",
 				headers: headers
-			}).then(function(item){def.resolve(this.transformGetResult(item));}.bind(this));
+			}).then(function(item){
+				def.resolve(this.toInstance(item));
+			}.bind(this));
 
 			return def;
 		},
@@ -43,11 +45,12 @@ define([
 			//		Additional metadata for storing the data.  Includes an "id"
 			//		property if a specific id is to be used.
 			//	returns: Number
-			object = this.transformItem(object);
+			object = this.fromInstance(object);
 			options = options || {};
 			var id = ("id" in options) ? options.id : this.getIdentity(object);
 			var hasId = typeof id != "undefined";
-			return xhr(hasId && !options.incremental ? "PUT" : "POST", {
+			var def = new Deferred();
+			xhr(hasId && !options.incremental ? "PUT" : "POST", {
 				url: hasId ? this.target + id : this.target,
 				postData: JSON.stringify(object),
 				handleAs: "json",
@@ -56,7 +59,11 @@ define([
 					"Content-Type": "application/json",
 					"Accept": this.accepts
 				}
-			});
+			}).then(function(item){
+				def.resolve(this.toInstance(item));
+			}.bind(this));
+
+			return def;
 		},
 		remove: function(id){
 			// summary:
@@ -73,7 +80,7 @@ define([
 		query: function(query, options) {
 			headers = {
 				'Authorization': 'Bearer ' + this.accessToken
-			}
+			};
 			
 			var results = xhr("GET", {
 				url: this.target,
@@ -93,7 +100,7 @@ define([
 			return results;
 		},
 		
-		transformResult: function(result) {
+		transformQueryResult: function(result) {
 			return result;
 		}
 	});
