@@ -85,7 +85,7 @@ define([
 			var results = xhr("GET", {
 				url: this.target,
 				handleAs: "json",
-				//content: query,
+				content: query,
 				headers: headers
 			});
 			

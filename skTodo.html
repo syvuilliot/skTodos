@@ -66,8 +66,9 @@
 					models: models,
 				}, "app");
 				app.startup();
-				models.Todo.store.sync();
-				app.on("sync", function(){models.Todo.store.sync();});
+				var offlineQuery = {updatedMin:"2012-07-04T12:00:00.000Z"};
+				models.Todo.store.sync(offlineQuery);
+				app.on("sync", function(){models.Todo.store.sync(offlineQuery);});
 				//new Tag({label:"test"}).save();
 			});
 		});
