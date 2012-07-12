@@ -3,14 +3,14 @@ define([
 	'dijit/_WidgetBase',	'dijit/_TemplatedMixin',
 	'dojo/text!./main.html',
 	'dijit/form/TextBox',
-	'./TagList',	'./TodoList'
+	'./taglist/TagList',	'./todolist/TodoList'
 ],
 function(
 	declare,
 	WidgetBase,				TemplatedMixin,
 	template,
 	TextBox,
-	TagListView,	TodoListView
+	TagListView,			TodoListView
 ) {
 	return declare([WidgetBase, TemplatedMixin], {
 		templateString: template,
@@ -18,12 +18,12 @@ function(
 		constructor: function(params) {
 		},
 		
-		bind: function(manager) {
-			this.manager = manager;
-			document.title = this.manager.get('title');
+		plug: function(component) {
+			this.component = component;
+			document.title = this.component.get('title');
 			
-			this.tagList.bind(this.manager.get('tagList'));
-			this.todoList.bind(this.manager.get('todoList'));
+			this.tagList.plug(this.component.get('tagList'));
+			this.todoList.plug(this.component.get('todoList'));
 		},
 		
 		postCreate: function() {
@@ -34,7 +34,7 @@ function(
 			
 			this.newTodo = new TextBox({}, this.newTodoNode);
 			this.newTodo.on("change", function(e){
-				this.manager.createTodo({label: this.newTodo.get("value")});
+				this.component.createTodo({label: this.newTodo.get("value")});
 				this.newTodo.set("value", "", false);
 			}.bind(this));
 		}

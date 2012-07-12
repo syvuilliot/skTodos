@@ -6,11 +6,12 @@
 </head>
 <body class="claro">
 	<div id="app"></div>
+	<div id="app2"></div>
     <script data-dojo-config="async: 1, isDebug: 1"
             src="../dojo/dojo.js"></script>
     <script>
 		require([
-			'sktodos/managers/Main',
+			'sktodos/components/Main',
 			'sktodos/ui/Main'
 		], function(
 			MainManager,
@@ -19,14 +20,14 @@
 			var mainMngr = window.mainMngr = new MainManager();
 			
 			// Test data
-			var tag1 = mainMngr.createTag({label: 'Test'});
-			var tag2 = mainMngr.createTag({label: 'Toto'});
+			var tag1 = mainMngr.tagList.createTag({label: 'Test'});
+			var tag2 = mainMngr.tagList.createTag({label: 'Toto'});
 			mainMngr.tagList.getChild(tag1).select();
 			mainMngr.createTodo({label: 'Todo test'});
 			mainMngr.tagList.getChild(tag1).select();
 			
-			// Binds a UI to the manager
-			new MainView({}, 'app').bind(mainMngr);
+			// Binds a UI to the component
+			new MainView({}, 'app').plug(mainMngr);
 		});
 	</script>
 </body>

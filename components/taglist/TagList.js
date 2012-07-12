@@ -1,14 +1,14 @@
 define([
 	'dojo/_base/declare',
-	'./_Base',		'./Tag'
+	'sktodos/components/base/_Base',		'./tag/Tag'
 ],
 function(
 	declare,
-	ManagerBase,	Tag
+	BaseCmp,							Tag
 ) {
-	return declare([ManagerBase], {
+	return declare([BaseCmp], {
 		_itemsGetter: function() {
-			return this.model.query({});
+			return this.tagModel.query({});
 		},
 		
 		_children: {},
@@ -35,7 +35,7 @@ function(
 		},
 		
 		createTag: function(data) {
-			
-		}
+			return new this.tagModel(data).save();
+		},
 	});
 });

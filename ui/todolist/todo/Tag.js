@@ -10,12 +10,18 @@ define([
 
 		postCreate: function() {
 			on(this.removeBtn, 'click', function() {
-				this.emit('remove');
+				this.component.remove();
 			}.bind(this));
 		},
 
 		_setTagAttr: function(tag) {
 			this.label.innerHTML = tag.label;
+		},
+		
+		plug: function(cmp) {
+			this.component = cmp;
+			this.set('tag', this.component.get('tag'));
+			return this;
 		}
 	});
 });

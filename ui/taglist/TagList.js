@@ -2,7 +2,7 @@
 	"dojo/_base/declare",
 	"dijit/_WidgetBase",	"dijit/_Container",
 	"SkFramework/controller/_ListRenderer",
-	"./Tag",
+	"./tag/Tag",
 ], function(
 	declare,
 	Widget,					Container,
@@ -11,7 +11,7 @@
 ) {
 	return declare([Widget, Container, _ListRenderer], {
 		addItem: function(tag, index){
-			var tagView = new TagView().bind(this.manager.getChild(tag));
+			var tagView = new TagView().plug(this.component.getChild(tag));
 			this.addChild(tagView);
 			return tagView;
 		},
@@ -19,9 +19,9 @@
 			child.destroyRecursive();
 		},
 		
-		bind: function(manager) {
-			this.manager = manager;
-			this.set('items', manager.get('items'));
+		plug: function(component) {
+			this.component = component;
+			this.set('items', component.get('items'));
 		}
 	});
 });

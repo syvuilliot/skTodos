@@ -1,21 +1,18 @@
 define([
 	'dojo/_base/declare',
-	'./_Base',		'./Todo'
+	'sktodos/components/base/_Base',		'./todo/Todo'
 ],
 function(
 	declare,
-	ManagerBase,	Todo
+	BaseCmp,		Todo
 ) {
-	return declare([ManagerBase], {
+	return declare([BaseCmp], {
 		items: [],
-		
-		constructor: function() {
-			this.selection = [];
-		},
 		
 		getChild: function(item) {
 			var child = new Todo({
-				todo: item
+				data: item,
+				tagModel: this.tagModel
 			});
 			return child;
 		}

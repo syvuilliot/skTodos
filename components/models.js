@@ -3,7 +3,7 @@
 	"SkFramework/model/Model",
 	"dojo/store/Memory",
 	"SkFramework/store/SimpleQueryEngineGet",
-	"dojo/store/Observable",
+	"dojo/store/Observable"
 ], function(create, Model, Store, SimpleQueryEngineGet, Observable){
 	
 	window.Tag = create(Model, function Tag(){
@@ -77,6 +77,6 @@
 
 	return {
 		Todo: Todo,
-		Tag: Tag,
+		Tag: Tag
 	};
 });

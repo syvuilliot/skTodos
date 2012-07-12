@@ -13,30 +13,16 @@ define([
 		postCreate: function() {
 			this.inherited(arguments);
 
-			on(this.validBtn, 'click', function() {
-				this.emit('tagselected', {
-					tag: this.getSelectedTag()
-				});
-			}.bind(this));
+			on(this.validBtn, 'click', this.selectTag.bind(this));
 		},
 
-		getSelectedTag: function() {
+		selectTag: function() {
 			var tagLabel = this.selector.get('value');
-			var matchingQuery = this.tagModel.query({
-				label: tagLabel
-			});
-			var tag;
-			if (matchingQuery.length > 0) {
-				tag = matchingQuery[0];
-			}
-			else {
-				// Create new tag
-				tag = new this.tagModel({
-					label: tagLabel
-				});
-				tag.save();
-			}
-			return tag;
+			this.component.selectTag(tagLabel);
+		},
+		
+		plug: function(component) {
+			this.component = component;
 		}
 	});
 });

@@ -1,12 +1,12 @@
 define([
 	'dojo/_base/declare',
-	'./_Base'
+	'sktodos/components/base/_Base'
 ],
 function(
 	declare,
-	ManagerBase
+	BaseCmp
 ) {
-	return declare([ManagerBase], {
+	return declare([BaseCmp], {
 		constructor: function(params) {
 		},
 		

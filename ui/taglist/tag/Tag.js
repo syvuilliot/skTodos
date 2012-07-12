@@ -12,7 +12,7 @@ define([
 ){
 	return declare([Widget, Evented, Templated, WidgetsInTemplate], {
 		templateString: template,
-		postCreate: function(){
+		postCreate: function() {
 			this.inherited(arguments);
 			//remove
 			this.removeButton.on("click", this.delete.bind(this));
@@ -21,26 +21,26 @@ define([
 			this.checkWidget.on("change", this.select.bind(this));
 		},
 		
-		bind: function(manager) {
-			this.manager = manager;
-			this.labelWidget.set("value", this.manager.get("label"), false);
-			this.checkWidget.set("checked", this.manager.get("selected"), false);
-			this.manager.watch('selected', function() {
-				this.checkWidget.set("checked", this.manager.get("selected"), false);
+		plug: function(component) {
+			this.component = component;
+			this.labelWidget.set("value", this.component.get("label"), false);
+			this.checkWidget.set("checked", this.component.get("selected"), false);
+			this.component.watch('selected', function() {
+				this.checkWidget.set("checked", this.component.get("selected"), false);
 			}.bind(this));
 			return this;
 		},
 		
 		changeLabel: function() {
-			this.manager.set('label', this.labelWidget.get('value'));
+			this.component.set('label', this.labelWidget.get('value'));
 		},
 		
 		select: function(checked) {
-			this.manager.select(checked);
+			this.component.select(checked);
 		},
 		
 		delete: function() {
-			this.manager.delete();
+			this.component.delete();
 		}
 	});
 });
