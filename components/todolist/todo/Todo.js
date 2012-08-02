@@ -14,7 +14,7 @@ function(
 				tagModel: this.tagModel
 			});
 			this.tagSelector.on('tagselected', function(ev) {
-				this.get('todo').add('tags', ev.tag).save();
+				this.get('todo').addTag(ev.tag).save();
 			}.bind(this));
 			this.tagList = new TagList({
 				todo: this.get('todo')

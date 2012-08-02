@@ -1,12 +1,13 @@
 define([
 	"dojo/_base/declare",	'dojo/on',
-	"dijit/_WidgetBase", "dojo/Evented",	"dijit/_TemplatedMixin",
+	"dijit/_WidgetBase",	"dojo/Evented",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin",
 	"dijit/form/Button",
 ], function(
 	declare,				on, 
-	Widget, Evented, Templated){
-	return declare([Widget, Evented, Templated], {
-		templateString: '<span><span data-dojo-attach-point="label"></span><button data-dojo-attach-point="removeBtn">X</button></span>',
+	Widget,					Evented,		Templated,					_WidgetsInTemplateMixin){
+	return declare([Widget, Evented, Templated, _WidgetsInTemplateMixin], {
+		'class': 'tag',
+		templateString: '<span><span data-dojo-attach-point="label"></span><span data-dojo-type="dijit/form/Button" data-dojo-attach-point="removeBtn">X</span></span>',
 
 		postCreate: function() {
 			on(this.removeBtn, 'click', function() {

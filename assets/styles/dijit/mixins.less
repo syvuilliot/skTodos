@@ -1,0 +1,21 @@
+/* Reset dijit Button style */
+.dijitButtonReset() {
+   margin: 0;
+   .dijitButtonNode {
+     padding: 0;
+     background: none;
+     border: none;
+     border-radius: 0;
+     box-shadow: none;
+     color: inherit;
+   }
+}
+
+/* TextBox displayed as normal text */
+.dijitTextBoxSubtle(@borderColor: black) {
+  border: 1px solid transparent;
+  
+  &.dijitHover {
+    border: 1px dashed @borderColor;
+  }
+}

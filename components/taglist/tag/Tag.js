@@ -10,25 +10,8 @@ function(
 		constructor: function(params) {
 		},
 		
-		delete: function() {
+		'delete': function() {
 			this.tag.delete();
-		},
-		
-		get: function() {
-			var result = this.inherited(arguments);
-			if (result === undefined) {
-				result = this.tag.get.apply(this.tag, arguments);
-			}
-			return result;
-		},
-		
-		set: function(name) {
-			if (this[name] !== undefined) {
-				var result = this.inherited(arguments);
-			}
-			else {
-				this.tag.set.apply(this.tag, arguments);
-			}
 		},
 		
 		selected: false,

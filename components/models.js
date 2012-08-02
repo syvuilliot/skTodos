@@ -13,6 +13,9 @@
 	window.Todo = create(Model, function Todo(){
 		this.superConstructor.apply(this, arguments);
 	});
+	Todo.prototype._checkedGetter = function() {
+		return this.checked || false;
+	};
 	
 	window.TodoTagRelation = create(Model, function TodoTagRelation(){ //need to give a constructor name for Constructor(new LocalStorage) to work
 		Model.apply(this, arguments);
@@ -45,7 +48,7 @@
 		}
 		return results;
 	};
-	Todo.prototype.addtags = function(tag, options){
+	Todo.prototype.addTag = function(tag, options){
 		options = options || {};
 		options.todo = this;
 		options.tag = tag;

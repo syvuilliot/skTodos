@@ -33,7 +33,7 @@ function(
 
 			var tag = this.tagList.get('selection');
 			if (tag) {
-				newTodo.add("tags", tag).save();
+				newTodo.addTag(tag).save();
 			}
 		}
 	});

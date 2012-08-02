@@ -1,0 +1,169 @@
+@import "mixins";
+
+// Grid system and page structure
+@import "../bootstrap/less/scaffolding.less";
+@import "../bootstrap/less/grid.less";
+@import "../bootstrap/less/layouts.less";
+@import "../bootstrap/less/responsive.less";
+
+@import "../../dijit/themes/dijit.css";
+@import "dijit/reset";
+@import "dijit/mixins";
+@import "dijit/form/Button";
+@import "dijit/form/Checkbox";
+@import "dijit/form/RadioButton";
+
+
+body {
+	padding-top: 60px;
+	padding-bottom: 40px;
+	line-height: normal;
+}
+
+.panel {
+  padding: 2em;
+  border-radius: 4px;
+
+  h2 {
+    font-size: 2em;
+    margin-top: 0;
+    text-transform: uppercase;
+  }
+}
+
+.panel.tag-list {
+  background-color: #AAA;
+  
+  h2 {
+    color: #EEE;
+    text-shadow: 1px 1px 0 #999;
+  }
+  
+  .tag {
+    .box;
+    width: 100%;
+    margin-top: 1em;
+    padding: 1ex;
+    background-color: #CCC;
+    
+    .select-btn {
+      margin-right: 5px;
+    }
+    
+    .label {
+      .box;
+      .flex(1);
+      .dijitTextBoxSubtle(#EEE);
+      font-size: 1.4em;
+      
+      .dijitInputField {
+        .box;
+        .flex(1);
+        input {
+          .box;
+          .flex(1);
+          height: 100%;
+        }
+      }
+    }
+
+    .delete-btn {
+      .box;
+    }
+    
+    &.selected .label {
+      font-weight: bold;
+    }
+  }
+}
+
+.panel.todo-list {
+  background-color: #EEE;
+  
+  h2 {
+    color: #AAA;
+    text-shadow: 1px 1px 0 white;
+  }
+  
+  .new-todo {
+    .box;
+    width: 100%;
+    font-size: 2em;
+    
+    .dijitTextBox {
+      .box;
+      .flex(1);
+      padding: 10px;
+      background: white;
+      border: none;
+      .dijitInputField {
+        .box;
+        .flex(1);
+        input {
+          .box;
+          .flex(1);
+        }
+      }
+    }
+    .dijitButton {
+      .box;
+      .dijitButtonNode {
+      .box;
+        padding: 8px 10px 10px;
+      }
+    }
+  }
+  
+  .todo {
+    margin-top: 1em;
+    padding: 1em;
+    background-color: #DDD;
+    
+    .label {
+      .dijitTextBoxSubtle(#AAA);
+      font-size: 2em;
+    }
+    
+    &.checked {
+      background-color: #E0E0E0;
+      .label input {
+        text-decoration: line-through;
+        color: #AAA;
+      }
+    }
+    
+    .tag-list {
+      margin: 1ex;
+      display: inline-block;
+      
+      .tag {
+        margin-right: 1ex;
+        
+        > span {
+          display: inline-block;
+          font-size: 1.1em;
+          background-color: #AAA;
+          color: white;
+          &:first-child {
+            padding: 0.5ex 1ex;
+          }
+        }
+        .dijitButton {
+          .dijitButtonReset();
+          
+          border-left: 1px solid #CCC;
+          color: #CCC;
+          .dijitButtonContents {
+            padding: 0.5ex;
+          }
+          &:hover {
+            background-color: #777;
+          }
+        }
+        * {
+          vertical-align: baseline;
+        }
+      }
+    }
+  }
+}

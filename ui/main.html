@@ -1,8 +1,19 @@
-﻿<div>
-	<h1>Tags</h1>
-	<div data-dojo-attach-point="tagListNode"></div>
+﻿<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="panel tag-list span3">
+        <h2>Tags</h2>
+        <div data-dojo-attach-point="tagListNode"></div>
+    </div>
+    <div class="panel todo-list span9">
+        <h2>Todos</h2>
+        
+		<div data-dojo-attach-point="newTodoNode"></div>
+		<div data-dojo-attach-point="todoListNode"></div>
+    </div>
+  </div>
 
-	<h1>Todos</h1>
-	<div data-dojo-attach-point="newTodoNode"></div>
-	<div data-dojo-attach-point="todoListNode"></div>
+  <footer>
+    <p>&copy; SK 2012</p>
+  </footer>
+
 </div>
