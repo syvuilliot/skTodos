@@ -1,17 +1,19 @@
 define([
 	"dojo/_base/declare",	'dojo/on',
 	"dijit/_WidgetBase",	"dojo/Evented",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin",
+	'../../base/_Base',
 	"dijit/form/Button",
 ], function(
 	declare,				on, 
-	Widget,					Evented,		Templated,					_WidgetsInTemplateMixin){
-	return declare([Widget, Evented, Templated, _WidgetsInTemplateMixin], {
+	Widget,					Evented,		Templated,					_WidgetsInTemplateMixin,
+	ViewBase){
+	return declare([Widget, Evented, Templated, _WidgetsInTemplateMixin, ViewBase], {
 		'class': 'tag',
 		templateString: '<span><span data-dojo-attach-point="label"></span><span data-dojo-type="dijit/form/Button" data-dojo-attach-point="removeBtn">X</span></span>',
 
 		postCreate: function() {
 			on(this.removeBtn, 'click', function() {
-				this.component.remove();
+				this.get('model').remove();
 			}.bind(this));
 		},
 
@@ -19,9 +21,9 @@ define([
 			this.label.innerHTML = tag.label;
 		},
 		
-		plug: function(cmp) {
-			this.component = cmp;
-			this.set('tag', this.component.get('tag'));
+		_setModelAttr: function() {
+			this.inherited(arguments);
+			this.set('tag', this.get('model').get('tag'));
 			return this;
 		}
 	});

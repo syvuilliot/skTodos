@@ -3,6 +3,7 @@ define([
 	'dijit/_WidgetBase',	'dijit/_TemplatedMixin',
 	'dojo/text!./main.html',
 	'dijit/form/Form',	'dijit/form/TextBox',	'dijit/form/Button',
+	'./base/_Base',
 	'./taglist/TagList',	'./todolist/TodoList'
 ],
 function(
@@ -10,20 +11,25 @@ function(
 	WidgetBase,				TemplatedMixin,
 	template,
 	Form,				TextBox,				Button,
+	ViewBase,
 	TagListView,			TodoListView
 ) {
-	return declare([WidgetBase, TemplatedMixin], {
+	return declare([WidgetBase, TemplatedMixin, ViewBase], {
 		templateString: template,
 		
-		constructor: function(params) {
+		modelMapping: {
+			title: 'title'
 		},
 		
-		plug: function(component) {
-			this.component = component;
-			document.title = this.component.get('title');
+		_setTitleAttr: function(title) {
+			document.title = title;
+		},
+		
+		_setModelAttr: function() {
+			this.inherited(arguments);
 			
-			this.tagList.plug(this.component.get('tagList'));
-			this.todoList.plug(this.component.get('todoList'));
+			this.tagList.set('model', this.get('model').get('tagList'));
+			this.todoList.set('model', this.get('model').get('todoList'));
 		},
 		
 		postCreate: function() {
@@ -43,7 +49,7 @@ function(
 			}).placeAt(this.newTodo);
 			
 			this.newTodo.on("submit", function(ev){
-				this.component.createTodo({label: this.newTodo.get("value").label});
+				this.get('model').createTodo({label: this.newTodo.get("value").label});
 				this.newTodo.reset();
 				ev.preventDefault();
 			}.bind(this));

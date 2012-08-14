@@ -1,26 +1,25 @@
 define([
 	'dojo/_base/declare',
-	'sktodos/components/base/_Base',		'./taglist/TagList',	'./todolist/TodoList',
-	'./models'
+	'sktodos/model/base/_Base',		'./taglist/TagList',	'./todolist/TodoList',
+	'../domain/Tag',	'../domain/Todo',
+	
+	'../domain/TodoTagRelation'
 ],
 function(
 	declare,
 	BaseCmp,		TagListManager,			TodoListManager,
-	models
+	Tag,			Todo
 ) {
-	var Tag = models.Tag;
-	var Todo = models.Todo;
-	
 	return declare([BaseCmp], {
 		title: "SK Todos sample app",
 		
 		constructor: function() {
 			this.tagList = new TagListManager({
-				tagModel: models.Tag
+				tagModel: Tag
 			});
 			
 			this.todoList = new TodoListManager({
-				tagModel: models.Tag
+				tagModel: Tag
 			});
 			
 			this.tagList.on('selectionchanged', function(ev) {

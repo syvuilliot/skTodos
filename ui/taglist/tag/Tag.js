@@ -1,6 +1,7 @@
 define([
 	"dojo/_base/declare",	"dojo/_base/lang",	'dojo/dom-class',
 	"dijit/_WidgetBase",	"dojo/Evented",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin",
+	'sktodos/ui/base/_Base',
 	"dojo/text!./tag.html",
 	"dijit/form/TextBox",
 	"dijit/form/Button",
@@ -8,10 +9,12 @@ define([
 ], function(
 	declare,				lang,				domClass,
 	Widget,					Evented,		Templated,					WidgetsInTemplate,
+	ViewBase,
 	template
 ){
-	return declare([Widget, Evented, Templated, WidgetsInTemplate], {
+	return declare([Widget, Evented, Templated, WidgetsInTemplate, ViewBase], {
 		templateString: template,
+		
 		postCreate: function() {
 			this.inherited(arguments);
 			//remove
@@ -21,18 +24,20 @@ define([
 			this.checkWidget.on("change", this.select.bind(this));
 		},
 		
-		plug: function(component) {
-			this.component = component;
-			this.labelWidget.set("value", this.component.get('tag').get("label"), false);
-			this.set('selected', this.component.get("selected"));
-			this.component.watch('selected', function(attr, oldValue, newValue) {
-				this.set('selected', newValue);
-			}.bind(this));
+		modelMapping: {
+			selected: 'selected'
+		},
+		
+		_setModelAttr: function(component) {
+			this.inherited(arguments);
+			
+			this.labelWidget.set("value", this.get('model').get('tag').get("label"), false);
+			
 			return this;
 		},
 		
 		changeLabel: function() {
-			this.component.get('tag').set('label', this.labelWidget.get('value'));
+			this.get('model').get('tag').set('label', this.labelWidget.get('value'));
 		},
 		
 		_setSelectedAttr: function(selected) {
@@ -42,12 +47,12 @@ define([
 		},
 		
 		select: function(selected) {
-			this.component.select(selected);
+			this.get('model').select(selected);
 			this.set('selected', selected);
 		},
 		
 		delete: function() {
-			this.component.delete();
+			this.get('model').delete();
 		}
 	});
 });

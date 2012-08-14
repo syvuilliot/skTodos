@@ -1,6 +1,6 @@
 define([
 	'dojo/_base/declare',
-	'sktodos/components/base/_Base',		'./todo/Todo'
+	'sktodos/model/base/_Base',		'./todo/Todo'
 ],
 function(
 	declare,

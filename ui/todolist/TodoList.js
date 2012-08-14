@@ -2,16 +2,18 @@
 	"dojo/_base/declare",
 	"dijit/_WidgetBase",	"dijit/_Container",
 	"SkFramework/controller/_ListRenderer",
+	'../base/_Base',
 	"./todo/Todo",
 ], function(
 	declare,
 	Widget,					Container,
 	_ListRenderer,
+	ViewBase,
 	TodoView
 ) {
-	return declare([Widget, Container, _ListRenderer], {
+	return declare([Widget, Container, ViewBase, _ListRenderer], {
 		addItem: function(item, index){
-			var child = new TodoView().plug(this.component.getChild(item));
+			var child = new TodoView().set('model', this.get('model').getChild(item));
 			this.addChild(child);
 			return child;
 		},
@@ -19,12 +21,8 @@
 			child.destroyRecursive();
 		},
 		
-		plug: function(component) {
-			this.component = component;
-			this.set('items', component.get('items'));
-			component.watch('items', function() {
-				this.set('items', component.get('items'));
-			}.bind(this));
+		modelMapping: {
+			items: 'items'
 		}
 	});
 });
