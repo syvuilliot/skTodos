@@ -13,8 +13,7 @@
 ) {
 	return declare([Widget, Container, ViewBase, _ListRenderer], {
 		renderItem: function(item, index){
-			var child = new TodoView().set('model', this.get('model').getChild(item));
-			return child;
+			return new TodoView().set('model', item);
 		},
 		
 		modelMapping: {

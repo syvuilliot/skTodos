@@ -9,12 +9,14 @@ function(
 	return declare([BaseCmp], {
 		items: [],
 		
-		getChild: function(item) {
-			var child = new Todo({
-				data: item,
-				tagModel: this.tagModel
-			});
-			return child;
-		}
+		_itemsGetter: function() {
+			return this.items.map(function(todo){
+				var child = new Todo({
+					domainModel: todo.get('todo'),
+					tagModel: this.tagModel
+				});
+				return child;
+			}.bind(this));
+		},
 	});
 });

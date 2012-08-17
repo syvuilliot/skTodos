@@ -22,18 +22,20 @@ function(
 				tagModel: Tag
 			});
 			
-			this.tagList.on('selectionchanged', function(ev) {
-				this.todoList.set('items', ev.selection.get("todosRelations"));
+			this.tagList.watch('selectedTag', function() {
+				this.todoList.set('items', this.tagList.get('selectedTag').get("todosRelations"));
 			}.bind(this));
 		},
 		
 		createTodo: function(data) {
 			var newTodo = new Todo(data).save();
 
-			var tag = this.tagList.get('selection');
+			var tag = this.tagList.get('selectedTag');
 			if (tag) {
 				newTodo.addTag(tag).save();
 			}
+			
+			return newTodo;
 		}
 	});
 });

@@ -16,15 +16,13 @@ define([
 				this.get('model').remove();
 			}.bind(this));
 		},
-
-		_setTagAttr: function(tag) {
-			this.label.innerHTML = tag.label;
-		},
 		
-		_setModelAttr: function() {
-			this.inherited(arguments);
-			this.set('tag', this.get('model').get('tag'));
-			return this;
+		modelMapping: {
+			label: 'label'
+		},
+
+		_setLabelAttr: function(label) {
+			this.label.innerHTML = label;
 		}
 	});
 });

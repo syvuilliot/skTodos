@@ -1,17 +1,13 @@
 define([
 	'dojo/_base/declare',
-	'sktodos/model/base/_Base'
+	'sktodos/model/base/_AppModel'
 ], function(
 	declare,
-	BaseCmp
+	AppModel
 ) {
-	return declare([BaseCmp], {
+	return declare([AppModel], {
 		remove: function() {
-			this.data.delete();
-		},
-		
-		_tagGetter: function() {
-			return this.data.get('tag');
+			this.relationModel.delete();
 		}
 	});
 });

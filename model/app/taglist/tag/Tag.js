@@ -1,12 +1,12 @@
 define([
 	'dojo/_base/declare',
-	'sktodos/model/base/_Base'
+	'sktodos/model/base/_AppModel'
 ],
 function(
 	declare,
-	BaseCmp
+	AppModel
 ) {
-	return declare([BaseCmp], {
+	return declare([AppModel], {
 		selected: false,
 		select: function(selected) {
 			selected = (selected === undefined ? true : selected);

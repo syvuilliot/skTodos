@@ -1,32 +1,24 @@
 define([
 	'dojo/_base/declare',
-	'sktodos/model/base/_Base',
+	'sktodos/model/base/_AppModel',
 	'./TagList',	'./TagSelector'
 ],
 function(
 	declare,
-	BaseCmp,
+	AppModel,
 	TagList,		TagSelector
 ) {
-	return declare([BaseCmp], {
+	return declare([AppModel], {
 		constructor: function(params) {
 			this.tagSelector = new TagSelector({
 				tagModel: this.tagModel
 			});
 			this.tagSelector.on('tagselected', function(ev) {
-				this.get('todo').addTag(ev.tag).save();
+				this.addTag(ev.tag).save();
 			}.bind(this));
 			this.tagList = new TagList({
-				todo: this.get('todo')
+				items: this.get('tagsRelations')
 			});
-		},
-		
-		_todoGetter: function() {
-			return this.data.get('todo');
-		},
-		
-		delete: function() {
-			this.get('todo').delete();
 		}
 	});
 });

@@ -35,16 +35,23 @@ define([
 		startup: function() {
 			this.inherited(arguments);
 			this.tagList.startup();
+			this.tagSelector.startup();
+		},
+		
+		modelMapping: {
+			label: 'label',
+			checked: 'checked'
 		},
 		
 		_setModelAttr: function(component) {
 			this.inherited(arguments);
-			
-			this.labelWidget.set("value", this.get('model').get('todo').get("label"), false);
-			this.set("checked", this.get('model').get('todo').get("checked"));
 			this.tagList.set('model', this.get('model').get("tagList"));
 			this.tagSelector.set('model', this.get('model').get('tagSelector'));
 			return this;
+		},
+		
+		_setLabelAttr: function(label) {
+			this.labelWidget.set("value", label, false);
 		},
 		
 		changeLabel: function() {

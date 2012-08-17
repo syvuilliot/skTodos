@@ -7,13 +7,10 @@ function(
 	BaseCmp,		Tag
 ) {
 	return declare([BaseCmp], {
-		constructor: function() {
-			this.set('items', this.todo.get('tagsRelations'));
-		},
-		
 		getChild: function(item) {
 			var child = new Tag({
-				data: item
+				domainModel: item.get('tag'),
+				relationModel: item
 			});
 			return child;
 		}

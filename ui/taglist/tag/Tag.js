@@ -25,15 +25,12 @@ define([
 		},
 		
 		modelMapping: {
+			label: 'label',
 			selected: 'selected'
 		},
 		
-		_setModelAttr: function(component) {
-			this.inherited(arguments);
-			
-			this.labelWidget.set("value", this.get('model').get("label"), false);
-			
-			return this;
+		_setLabelAttr: function(label) {
+			this.labelWidget.set("value", label, false);
 		},
 		
 		changeLabel: function() {
@@ -48,7 +45,6 @@ define([
 		
 		select: function(selected) {
 			this.get('model').select(selected);
-			this.set('selected', selected);
 		},
 		
 		delete: function() {
