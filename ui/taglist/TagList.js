@@ -1,8 +1,8 @@
 ﻿define([
 	"dojo/_base/declare",
 	"dijit/_WidgetBase",	"dijit/_Container",
-	"SkFramework/controller/_ListRenderer",
-	'../base/_Base',
+	"SkFramework/widgets/_ListRendererMixin",
+	'SkFramework/widgets/_ModelRendererMixin',
 	"./tag/Tag",
 ], function(
 	declare,
@@ -12,13 +12,9 @@
 	TagView
 ) {
 	return declare([Widget, Container, ViewBase, _ListRenderer], {
-		addItem: function(tag, index){
-			var tagView = new TagView().set('model', this.get('model').getChild(tag));
-			this.addChild(tagView);
+		renderItem: function(tag, index){
+			var tagView = new TagView().set('model', tag);
 			return tagView;
-		},
-		removeItem: function(item, index, child){
-			child.destroyRecursive();
 		},
 		
 		modelMapping: {

@@ -3,7 +3,7 @@ define([
 	'dijit/_WidgetBase',	'dijit/_TemplatedMixin',
 	'dojo/text!./main.html',
 	'dijit/form/Form',	'dijit/form/TextBox',	'dijit/form/Button',
-	'./base/_Base',
+	'SkFramework/widgets/_ModelRendererMixin',
 	'./taglist/TagList',	'./todolist/TodoList'
 ],
 function(
@@ -53,6 +53,12 @@ function(
 				this.newTodo.reset();
 				ev.preventDefault();
 			}.bind(this));
+		},
+
+		startup: function() {
+			this.inherited(arguments);
+			this.tagList.startup();
+			this.todoList.startup();
 		}
 	});
 });

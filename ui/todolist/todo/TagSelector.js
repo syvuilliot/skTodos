@@ -1,7 +1,7 @@
 define([
 	'dojo/_base/declare',	'dojo/on',
 	"dijit/_WidgetBase",	"dojo/Evented",	"dijit/_TemplatedMixin",	'dijit/_WidgetsInTemplateMixin',
-	'../../base/_Base',
+	'SkFramework/widgets/_ModelRendererMixin',
 	"dijit/form/Button",	'dijit/form/TextBox'
 ], function(
 	declare,				on,

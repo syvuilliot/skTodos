@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare",	"dojo/_base/lang",	'dojo/dom-class',
 	"dijit/_WidgetBase",	"dojo/Evented",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin",
-	'sktodos/ui/base/_Base',
+	'SkFramework/widgets/_ModelRendererMixin',
 	"dojo/text!./tag.html",
 	"dijit/form/TextBox",
 	"dijit/form/Button",
@@ -31,13 +31,13 @@ define([
 		_setModelAttr: function(component) {
 			this.inherited(arguments);
 			
-			this.labelWidget.set("value", this.get('model').get('tag').get("label"), false);
+			this.labelWidget.set("value", this.get('model').get("label"), false);
 			
 			return this;
 		},
 		
 		changeLabel: function() {
-			this.get('model').get('tag').set('label', this.labelWidget.get('value'));
+			this.get('model').set('label', this.labelWidget.get('value'));
 		},
 		
 		_setSelectedAttr: function(selected) {

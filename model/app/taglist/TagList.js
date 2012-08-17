@@ -1,28 +1,32 @@
 define([
-	'dojo/_base/declare',
+	'dojo/_base/declare',	'dojo/_base/lang',
+	'dojo/Stateful',
+	'dojo/Evented',
 	'sktodos/model/base/_Base',		'./tag/Tag'
 ],
 function(
-	declare,
+	declare,				lang,
+	Stateful,
+	Evented,
 	BaseCmp,							Tag
 ) {
+
+
 	return declare([BaseCmp], {
+		// Provisoire
+		_children: [],
 		_itemsGetter: function() {
-			return this.tagModel.query({});
-		},
-		
-		_children: {},
-		getChild: function(tag) {
-			var tagId = tag.getIdentity();
-			if (!(tagId in this._children)) {
-				var child = this._children[tagId] = new Tag({
-					tag: tag
+			return this.tagModel.query({}).map(function(tag){
+				var child = new Tag({
+					domainModel: tag,
 				});
 				child.watch('selected', function() {
-					this.select(child.tag, child.selected);
+					this.select(child, child.selected);
 				}.bind(this));
-			}
-			return this._children[tagId];
+				// Provisoire
+				this._children.push(child);
+				return child;
+			}.bind(this));
 		},
 		
 		select: function(tag, selected) {

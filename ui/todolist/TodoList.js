@@ -1,8 +1,8 @@
 ﻿define([
 	"dojo/_base/declare",
 	"dijit/_WidgetBase",	"dijit/_Container",
-	"SkFramework/controller/_ListRenderer",
-	'../base/_Base',
+	"SkFramework/widgets/_ListRendererMixin",
+	'SkFramework/widgets/_ModelRendererMixin',
 	"./todo/Todo",
 ], function(
 	declare,
@@ -12,13 +12,9 @@
 	TodoView
 ) {
 	return declare([Widget, Container, ViewBase, _ListRenderer], {
-		addItem: function(item, index){
+		renderItem: function(item, index){
 			var child = new TodoView().set('model', this.get('model').getChild(item));
-			this.addChild(child);
 			return child;
-		},
-		removeItem: function(item, index, child){
-			child.destroyRecursive();
 		},
 		
 		modelMapping: {

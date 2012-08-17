@@ -36,14 +36,15 @@
 			// Test data
 			var tag1 = window.tag1 = mainMngr.tagList.createTag({label: 'Test'});
 			var tag2 = mainMngr.tagList.createTag({label: 'Toto'});
-			mainMngr.tagList.getChild(tag1).select();
+			mainMngr.tagList.get('items');
+			mainMngr.tagList._children[0].select();
 			mainMngr.createTodo({label: 'Faire ci'});
 			mainMngr.createTodo({label: 'Faire ça'});
 			mainMngr.createTodo({label: "Ca c'est fait", checked: true});
-			mainMngr.tagList.getChild(tag1).select();
+			mainMngr.tagList._children[0].select();
 			
 			// Binds a UI to the component
-			new MainView({}, 'app').set('model', mainMngr);
+			new MainView({}, 'app').set('model', mainMngr).startup();
 		});
 	</script>
 </body>

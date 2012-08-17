@@ -26,7 +26,7 @@ function(
 		},
 		
 		delete: function() {
-			this.data.delete();
+			this.get('todo').delete();
 		}
 	});
 });

@@ -7,13 +7,6 @@ function(
 	BaseCmp
 ) {
 	return declare([BaseCmp], {
-		constructor: function(params) {
-		},
-		
-		'delete': function() {
-			this.tag.delete();
-		},
-		
 		selected: false,
 		select: function(selected) {
 			selected = (selected === undefined ? true : selected);

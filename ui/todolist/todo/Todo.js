@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare",	"dojo/_base/lang",	'dojo/dom-class',
 	"dijit/_WidgetBase",	"dojo/Evented",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin",
 	"dojo/text!./todo.html",
-	'../../base/_Base',
+	'SkFramework/widgets/_ModelRendererMixin',
 	'./TagList',	'./TagSelector',
 	
 	"dijit/form/TextBox",	"dijit/form/CheckBox",
@@ -30,6 +30,11 @@ define([
 			this.tagSelector = new TagSelector({
 				tagModel: Tag,
 			}, this.addTagNode);
+		},
+
+		startup: function() {
+			this.inherited(arguments);
+			this.tagList.startup();
 		},
 		
 		_setModelAttr: function(component) {
