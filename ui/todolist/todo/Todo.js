@@ -55,7 +55,12 @@ define([
 		},
 		
 		changeLabel: function() {
-			this.get('model').set('label', this.labelWidget.get('value'));
+			try {
+				this.get('model').set('label', this.labelWidget.get('value'));
+			}
+			catch(ex) {
+				this.set('label', this.get('model').get('label'));
+			}
 		},
 		
 		_setCheckedAttr: function(checked) {

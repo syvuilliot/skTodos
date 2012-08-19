@@ -19,6 +19,12 @@ function(
 			this.tagList = new TagList({
 				items: this.get('tagsRelations')
 			});
+		},
+		
+		_labelSetter: function(newLabel) {
+			if (this.get('checked')) {
+				throw new Error("Cannot change label of a done task");
+			}
 		}
 	});
 });
