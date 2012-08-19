@@ -11,6 +11,7 @@ define([
 	window.TodoTagRelation = create(Model, function TodoTagRelation(){ //need to give a constructor name for Constructor(new LocalStorage) to work
 		Model.apply(this, arguments);
 	});
+	TodoTagRelation.initNewStore();
 	
 	TodoTagRelation.addRelationTo(Tag, {
 		sourcePropertyName: "tag",
@@ -24,11 +25,6 @@ define([
 		min: 0,
 		max: null,
 	});
-	TodoTagRelation.store = window.todoTagRelationStore = Observable(
-		new Store({
-			queryEngine: SimpleQueryEngineGet,
-		})
-	);
 	
 		
 	Tag.prototype.gettodos = function(){

@@ -9,13 +9,7 @@ define([
 	window.Tag = create(Model, function Tag(){
 		this.superConstructor.apply(this, arguments);
 	});
-
-	Tag.store = window.tagStore = Observable(
-		new Store({
-			queryEngine: SimpleQueryEngineGet,
-		})
-	);
-
+	Tag.initNewStore();
 
 	return Tag;
 });

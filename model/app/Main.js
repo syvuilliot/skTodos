@@ -1,16 +1,16 @@
 define([
 	'dojo/_base/declare',
-	'sktodos/model/base/_Base',		'./taglist/TagList',	'./todolist/TodoList',
+	'sktodos/model/base/_Base',		'./taglist/TagList',	'./todo/Todo',
 	'../domain/Tag',	'../domain/Todo',
 	
 	'../domain/TodoTagRelation'
 ],
 function(
 	declare,
-	BaseCmp,		TagListManager,			TodoListManager,
+	AppBase,		TagListManager,			AppTodo,
 	Tag,			Todo
 ) {
-	return declare([BaseCmp], {
+	return declare([AppBase], {
 		title: "SK Todos sample app",
 		
 		constructor: function() {
@@ -18,12 +18,15 @@ function(
 				tagModel: Tag
 			});
 			
-			this.todoList = new TodoListManager({
-				tagModel: Tag
-			});
+			this.todoList = new AppBase();
 			
-			this.tagList.watch('selectedTag', function() {
-				this.todoList.set('items', this.tagList.get('selectedTag').get("todosRelations"));
+			this.tagList.watch('selectedTag', function(prop, oldVal, selectedTag) {
+				this.todoList.set('items', selectedTag.get("todosRelations").map(function(todoRel){
+					return new AppTodo({
+						domainModel: todoRel.get('todo'),
+						tagModel: Tag
+					});
+				}.bind(this)));
 			}.bind(this));
 		},
 		
