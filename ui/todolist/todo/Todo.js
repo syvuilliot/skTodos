@@ -55,7 +55,7 @@ define([
 		},
 		
 		changeLabel: function() {
-			this.get('model').get('todo').set('label', this.labelWidget.get('value'));
+			this.get('model').set('label', this.labelWidget.get('value'));
 		},
 		
 		_setCheckedAttr: function(checked) {
@@ -65,7 +65,7 @@ define([
 		
 		checkChanged: function(checked) {
 			this.set('checked', checked);
-			this.get('model').get('todo').set('checked', this.checkWidget.get('checked'));
+			this.get('model').set('checked', this.checkWidget.get('checked'));
 		},
 		
 		remove: function() {

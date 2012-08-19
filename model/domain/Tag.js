@@ -9,7 +9,6 @@ define([
 	window.Tag = create(Model, function Tag(){
 		this.superConstructor.apply(this, arguments);
 	});
-	Tag.initNewStore();
 
 	return Tag;
 });

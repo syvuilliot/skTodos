@@ -11,7 +11,6 @@ define([
 	window.TodoTagRelation = create(Model, function TodoTagRelation(){ //need to give a constructor name for Constructor(new LocalStorage) to work
 		Model.apply(this, arguments);
 	});
-	TodoTagRelation.initNewStore();
 	
 	TodoTagRelation.addRelationTo(Tag, {
 		sourcePropertyName: "tag",

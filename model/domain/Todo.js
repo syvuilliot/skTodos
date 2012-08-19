@@ -9,7 +9,6 @@ define([
 	window.Todo = create(Model, function Todo(){
 		this.superConstructor.apply(this, arguments);
 	});
-	Todo.initNewStore();
 	Todo.prototype._checkedGetter = function() {
 		return this.checked || false;
 	};
