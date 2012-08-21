@@ -27,9 +27,10 @@ define([
 			
 			this.tagList = new TagList({}, this.tagListNode);
 			
-			this.tagSelector = new TagSelector({
-				tagModel: Tag,
-			}, this.addTagNode);
+			this.tagSelector = new TagSelector({}, this.addTagNode);
+			this.tagSelector.on('tagselected', function(tagLabel) {
+				this.get('model').addTag(tagLabel);
+			}.bind(this));
 		},
 
 		startup: function() {
@@ -45,8 +46,7 @@ define([
 		
 		_setModelAttr: function(component) {
 			this.inherited(arguments);
-			this.tagList.set('model', this.get('model').get("tagList"));
-			this.tagSelector.set('model', this.get('model').get('tagSelector'));
+			this.tagList.set('model', this.get('model'));
 			return this;
 		},
 		

@@ -13,12 +13,12 @@
 ) {
 	return declare([Widget, Container, _ListRenderer, ViewBase], {
 		renderItem: function(item, index){
-			var child = new TagView().set('model', this.get('model').getChild(item));
+			var child = new TagView().set('model', item);
 			return child;
 		},
 		
 		modelMapping: {
-			items: 'items'
+			tags: 'items'
 		}
 	});
 });

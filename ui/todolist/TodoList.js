@@ -17,7 +17,7 @@
 		},
 		
 		modelMapping: {
-			items: 'items'
+			todos: 'items'
 		}
 	});
 });

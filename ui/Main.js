@@ -1,5 +1,5 @@
 define([
-	'dojo/_base/declare',
+	'dojo/_base/declare',	'dojo/on',
 	'dijit/_WidgetBase',	'dijit/_TemplatedMixin',
 	'dojo/text!./main.html',
 	'dijit/form/Form',	'dijit/form/TextBox',	'dijit/form/Button',
@@ -7,7 +7,7 @@ define([
 	'./taglist/TagList',	'./todolist/TodoList'
 ],
 function(
-	declare,
+	declare,				on,
 	WidgetBase,				TemplatedMixin,
 	template,
 	Form,				TextBox,				Button,
@@ -28,8 +28,8 @@ function(
 		_setModelAttr: function() {
 			this.inherited(arguments);
 			
-			this.tagList.set('model', this.get('model').get('tagList'));
-			this.todoList.set('model', this.get('model').get('todoList'));
+			this.tagList.set('model', this.get('model'));
+			this.todoList.set('model', this.get('model'));
 		},
 		
 		postCreate: function() {
@@ -52,6 +52,10 @@ function(
 				this.get('model').createTodo({label: this.newTodo.get("value").label});
 				this.newTodo.reset();
 				ev.preventDefault();
+			}.bind(this));
+			
+			on(this.btnAll, 'click', function() {
+				this.get('model').showAll();
 			}.bind(this));
 		},
 

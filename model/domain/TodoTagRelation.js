@@ -56,7 +56,7 @@ define([
 		options = options || {};
 		options.todo = this;
 		options.tag = tag;
-		return new TodoTagRelation(options);
+		return new TodoTagRelation(options).save();
 	};
 
 	var oldDelete = Todo.prototype.delete;

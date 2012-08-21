@@ -1,15 +1,13 @@
 define([
 	'dojo/_base/declare',	'dojo/on',
 	"dijit/_WidgetBase",	"dojo/Evented",	"dijit/_TemplatedMixin",	'dijit/_WidgetsInTemplateMixin',
-	'SkFramework/widgets/_ModelRendererMixin',
 	"dijit/form/Button",	'dijit/form/TextBox'
 ], function(
 	declare,				on,
 	Widget,					Evented,		Templated,					_WidgetsInTemplateMixin,
-	ViewBase,
 	Button,					TextBox
 ) {
-	return declare([Widget, Templated, _WidgetsInTemplateMixin, Evented, ViewBase], {
+	return declare([Widget, Templated, _WidgetsInTemplateMixin, Evented], {
 		templateString: '<span><span data-dojo-type="dijit/form/TextBox" data-dojo-attach-point="selector"></span><button data-dojo-attach-point="validBtn">+</button></span>',
 
 		postCreate: function() {
@@ -19,8 +17,7 @@ define([
 		},
 
 		selectTag: function() {
-			var tagLabel = this.selector.get('value');
-			this.get('model').selectTag(tagLabel);
+			this.emit('tagselected', this.selector.get('value'));
 		}
 	});
 });
