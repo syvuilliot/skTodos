@@ -1,6 +1,6 @@
 define([
 	'dojo/_base/declare',
-	'sktodos/model/base/_AppModel',
+	'SkFramework/model/_DomainModelProxy',
 	'./Tag'
 ],
 function(

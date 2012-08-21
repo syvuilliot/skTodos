@@ -1,14 +1,14 @@
 define([
 	'dojo/_base/declare',
 	'../domain/Tag',	'../domain/Todo',	'../domain/TodoTagRelation',
-	'sktodos/model/base/_Base',	'./tag/Tag',	'./todo/Todo'
+	'SkFramework/model/_AppModel',	'./tag/Tag',	'./todo/Todo'
 ],
 function(
 	declare,
 	Tag,				Todo,				TodoTagRel,
-	AppBase,					AppTag,			AppTodo
+	AppModel,					AppTag,			AppTodo
 ) {
-	return declare([AppBase], {
+	return declare([AppModel], {
 		title: "SK Todos sample app",
 		selectedTag: null,
 		
