@@ -33,18 +33,18 @@
 		){
 			var mainMngr = window.mainMngr = new MainManager();
 			
-			// Binds a UI to the component
-			new MainView({}, 'app').set('model', mainMngr).startup();
-			
+			mainMngr.createTag({label: 'Important'});
 			// Test data
-			window.task1 = mainMngr.createTodo({label: 'Faire ci'});
+			mainMngr.createTodo({label: 'Faire ci'});
 			mainMngr.createTodo({label: 'Faire ça'});
+			
+			mainMngr.get('tags')[0].select();
 			mainMngr.createTodo({label: "Ca c'est fait", checked: true});
 			
-			window.tag1 = mainMngr.createTag({label: 'Important'});
-			task1.addTag(tag1);
-			
 			mainMngr.showAll();
+			
+			// Binds a UI to the component
+			new MainView({}, 'app').set('model', mainMngr).startup();
 		});
 	</script>
 </body>
