@@ -1,20 +1,19 @@
 define([
 	"dojo/_base/declare",	"dojo/_base/lang",	'dojo/dom-class',
-	"dijit/_WidgetBase",	"dojo/Evented",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin",
+	"dijit/_WidgetBase",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin",
 	"dojo/text!./todo.html",
-	'SkFramework/widgets/_ModelRendererMixin', "SkFramework/utils/statefulSync",
+	"SkFramework/utils/statefulSync",
 	"./model/Todo",
 	
 	"dijit/form/TextBox",	"dijit/form/CheckBox",
 ], function(
 	declare,				lang,				domClass,
-	Widget,					Evented,		Templated,					WidgetsInTemplate,
+	Widget,					Templated,					WidgetsInTemplate,
 	template,
-	ModelRenderer,	statefulSync,
+	statefulSync,
 	TodoModel
-
 ){
-	return declare([Widget, Evented, Templated, WidgetsInTemplate, ModelRenderer], {
+	return declare([Widget, Templated, WidgetsInTemplate], {
 		templateString: template,
 		
 		_setDataAttr: function(data){ //external data
