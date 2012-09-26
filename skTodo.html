@@ -25,26 +25,16 @@
             src="../dojo/dojo.js"></script>
     <script>
 		require([
-			'sktodos/model/app/Main',
-			'sktodos/ui/Main'
-		], function(
-			MainManager,
-			MainView
-		){
-			var mainMngr = window.mainMngr = new MainManager();
+			'dojo/Stateful',
+			'sktodos/todo/Todo',
+		], function(Stateful, TodoManager){
+			window.externalModel = new Stateful({label: "Faire les courses"});
+
+			var mainMngr = window.mainMngr = new TodoManager({
+				model: externalModel,
+			}, "app");
+			mainMngr.startup();
 			
-			mainMngr.createTag({label: 'Important'});
-			// Test data
-			mainMngr.createTodo({label: 'Faire ci'});
-			mainMngr.createTodo({label: 'Faire ça'});
-			
-			mainMngr.get('tags')[0].select();
-			mainMngr.createTodo({label: "Ca c'est fait", checked: true});
-			
-			mainMngr.showAll();
-			
-			// Binds a UI to the component
-			new MainView({}, 'app').set('model', mainMngr).startup();
 		});
 	</script>
 </body>
