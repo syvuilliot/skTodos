@@ -4,6 +4,7 @@ define([
 	"dojo/text!./todo.html",
 	"SkFramework/utils/statefulSync",
 	"./model/Todo",
+
 	
 	"dijit/form/TextBox",	"dijit/form/CheckBox",
 ], function(
@@ -15,20 +16,20 @@ define([
 ){
 	return declare([Widget, Templated, WidgetsInTemplate], {
 		templateString: template,
-		
-		_setDataAttr: function(data){ //external data
-			var todo = new TodoModel(data);
-			this.set("model", todo);
-		},
-		_setModelAttr: function(model){ //internal model
-			this.model = model;
+
+		postCreate: function(){
+			this.inherited(arguments);
+
+			var model = this.model = new TodoModel(); //internal model
 			statefulSync(model, this.labelWidget, {
 				label: "value",
+				checked: "disabled",
 			});
 			statefulSync(model, this.checkWidget, {
 				checked: "checked",
 			});
+
 		},
-				
+						
 	});
 });
