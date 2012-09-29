@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="../../../dijit/themes/claro/claro.css" />
+    <meta charset="utf-8">
+    <title>DueDatePicker component test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="SK">
+
+  </head>
+
+<body class="claro">
+	<div id="app"></div>
+    <script data-dojo-config="async: false"
+        src="../../../dojo/dojo.js">
+    </script>
+
+    <script>
+		require([
+			'sktodos/dueDatePicker/DueDatePicker',
+
+		], function(DueDatePicker){
+			window.dueDatePicker = new DueDatePicker({
+                date: new Date(2012, 11, 25),
+            }, "app");
+            dueDatePicker.startup();
+
+
+
+		});
+	</script>
+</body>
+</html>
