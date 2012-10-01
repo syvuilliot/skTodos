@@ -25,7 +25,7 @@
 		], function(Stateful, TodoListManager){
 			window.externalModel = [
                 new Stateful({id: "1", label: "Faire les courses", done: true, urgent: true}),
-                new Stateful({id: "2", label: "Faire le ménage", done: false, urgent: false}),
+                new Stateful({id: "2", label: "Faire le ménage", done: false, urgent: false, dueDate: new Date(2012, 11, 25)}),
                 new Stateful({id: "3", label: "Faire la lessive", urgent: true}),
             ];
 
@@ -33,9 +33,9 @@
 			}, "all-todos");
 			mainMngr.startup();
 
-            mainMngr.model.put(externalModel[0]);
-            mainMngr.model.put(externalModel[1]);
-            mainMngr.model.put(externalModel[2]);
+            mainMngr.add("0", externalModel[0]);
+            mainMngr.add("1", externalModel[1]);
+            mainMngr.add("2", externalModel[2]);
 
 /*            console.assert("The internal model has the same label than the label widget", mainMngr.get("model").get("label") === mainMngr.get("labelWidget").get("value"));
             console.assert("The internal model 'checked' property is false by default", mainMngr.get("model").get("checked") === false);

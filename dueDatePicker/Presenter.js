@@ -11,7 +11,7 @@ define([
 		_setDateAttr: function(value){
 			var date = value; //TODO: check that value is a date or try to convert to a date ("today", "tomorrow", ...)
 			this.set("clearButtonDisabled", !date);
-			this.set("todayButtonDisabled", date && date.toDateString() === new Date(Date.now()).toDateString());
+			this.set("todayButtonDisabled", date && date.toDateString() === new Date().toDateString());
 			// this.set("tomorrowButtonDisabled", date === Date.now()+1);
 			this._set("date", date);
 
@@ -20,7 +20,7 @@ define([
 			this.set("date", null);
 		},
 		setDateToday: function(){
-			this.set("date", new Date(Date.now()));
+			this.set("date", new Date());
 		}
 	});
 });

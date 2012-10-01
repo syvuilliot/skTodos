@@ -1,18 +1,26 @@
 define([
-	"SkFramework/utils/create",
-	"SkFramework/model/Model",
-	"dojo/store/Memory",
-	"SkFramework/store/SimpleQueryEngineGet",
-	"dojo/store/Observable"
-], function(create, Model, Store, SimpleQueryEngineGet, Observable){
+	"dojo/_base/declare",
+	"dojo/Stateful",
+	"dojo/Evented",
+], function(declare, Stateful, Evented){
 	
-	window.Todo = create(Model, function Todo(){
-		this.superConstructor.apply(this, arguments);
+	return declare([Stateful, Evented], {
+		_checkedGetter: function() {
+			return this.checked || false;
+		},
+		_labelGetter: function(){
+			return this.label || "";
+
+		},
+
+		_labelSetter: function(value) {
+			if(this.get("checked")===true){
+				throw ("Cannot change the label of an already completed todo");
+			} else {
+				this.label = value;
+			}
+		},
 	});
-	Todo.prototype._checkedGetter = function() {
-		return this.checked || false;
-	};
 
 
-	return Todo;
 });

@@ -1,11 +1,11 @@
 define([
 	"dojo/_base/declare",
 	"SkFramework/utils/statefulSync",
-	"./Model",
+	"./Presenter",
 	"./View",
-], function(declare, statefulSync, Model, View){
+], function(declare, statefulSync, Presenter, View){
 	
-	return declare([View, Model], {
+	return declare([View, Presenter], {
 		startup: function(){
 			this.inherited(arguments);
 			this.bind();
@@ -15,7 +15,7 @@ define([
 			var self = this;
 			function setLabel (date){
 				self.label.innerText = date || "No date selected";
-			};
+			}
 			setLabel(this.get("date"));
 			this.watch("date", function(prop, old, current){
 				setLabel(current);
