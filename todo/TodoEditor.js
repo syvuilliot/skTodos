@@ -28,14 +28,16 @@ define([
 		bind: function(){
 
 			statefulSync(this, this.labelWidget, {
-				label: "value",
-				checked: "disabled",
+				"label": "value",
 			});
+			this.watch("checked", function(prop, old, current){
+				this.labelWidget.set("disabled", current);
+			}.bind(this));
 			statefulSync(this, this.checkWidget, {
-				checked: "checked",
+				"checked": "checked",
 			});
 			statefulSync(this, this.dueDateWidget, {
-				dueDate: "date",
+				"dueDate": "date",
 			});
 			this.dueDateButton.on("click", function(){
 				this.set("dueDate", new Date());
@@ -48,7 +50,11 @@ define([
 			this.watch("dueDate", function(prop, old, current){
 				dueDateWidgetToogle.bind(this)(current);
 			}.bind(this));
-
+			this.watch("disabled", function(prop, old, current){
+				this.labelWidget.set("disabled", current);
+				this.checkWidget.set("disabled", current);
+				this.dueDateWidget.set("disabled", current);
+			}.bind(this));
 		},
 						
 	});

@@ -22,17 +22,22 @@ define([
 			});
 			statefulSync(this, this.datePicker, {
 				"date": "value",
-				"rangeStart": "rangeStart",
-				"rangeEnd": "rangeEnd"
 			});
+				// "rangeStart": "rangeStart",
+				// "rangeEnd": "rangeEnd",
 			this.clearButton.on("click", this.clearDate.bind(this));
 			this.todayButton.on("click", this.setDateToday.bind(this));
-			statefulSync(this, this.todayButton, {
-				"todayButtonDisabled": "disabled",
-			});
-			statefulSync(this, this.clearButton, {
-				"clearButtonDisabled": "disabled",
-			});
+			this.watch("todayButtonDisabled", function(prop, old, current){
+				this.todayButton.set("disabled", current);
+			}.bind(this));
+			this.watch("clearButtonDisabled", function(prop, old, current){
+				this.clearButton.set("disabled", current);
+			}.bind(this));
+			this.watch("disabled", function(prop, old, current){
+				this.datePicker.set("disabled", current);
+				this.todayButton.set("disabled", current);
+				this.clearButton.set("disabled", current);
+			}.bind(this));
 		}
 	});
 });
