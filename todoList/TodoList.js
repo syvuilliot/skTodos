@@ -1,54 +1,40 @@
 define([
 	"dojo/_base/declare",
-	"dijit/_WidgetBase",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin", "dijit/_Container",
-	"dojo/text!./todo-list.html",
 	"SkFramework/utils/statefulSync",
-	"./model/TodosCollection",
-	"skTodos/todo/Todo",
-
-	
-	"dijit/form/TextBox",	"dijit/form/CheckBox",
+	"./View",
+	"./Presenter",
 ], function(
 	declare,
-	Widget,					Templated,					WidgetsInTemplate,	Container,
-	template,
 	statefulSync,
-	TodosCollection,
-	TodoComponent
+	View,
+	Presenter
+
 ){
-	return declare([Widget, Templated, Container, TodosCollection], {
-		templateString: template,
-		constructor: function(){
-			this.todos = {};
-		},
+	return declare([View, Presenter], {
 		startup: function(){
 			this.inherited(arguments);
-			this.bind();
+			this.bindView();
 		},
 
-		addTodo: function(key){
-			var todoComp = new TodoComponent();
-			this.todos[key] = todoComp;
-			this.addChild(todoComp);
-		},
-		removeTodo: function(key){
-			this.todos[key].destroy();
-			delete this.todos[key];
-		},
 
-		bind: function(){
-			this.on("keyAdded", function(e){
-				this.addTodo(e.key);
+		bindView: function(){
+			var handlers = [];
+			this.todos.on("keyAdded", function(e){
+				this.addTodoComp(e.key);
+				var todoComp = this.getTodoComp(e.key);
+				var mapping = {};
+				mapping[e.key] = "todo";
+				handlers.push(statefulSync(this.todos, todoComp, mapping));
+				handlers.push(statefulSync(this, todoComp, {
+					"disabled": "disabled",
+				}));
 			}.bind(this));
-			this.on("valueSetted", function(e){
-				var todoComp = this.todos[e.key];
-				todoComp.set(e.value);
-				todoComp.on("change", function(e){
-					
+
+			this.todos.on("keyRemoved", function(e){
+				handlers.forEach(function(handler){
+					handler.remove();
 				});
-			});
-			this.on("keyRemoved", function(e){
-				this.removeTodo(e.key);
+				this.removeTodoComp(e.key);
 			}.bind(this));
 		}
 
