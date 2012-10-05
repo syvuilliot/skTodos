@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare",
 	"dijit/Destroyable",
 	"SkFramework/utils/statefulSync",
-	"./model/Collection",
+	"skTodos/utils/Collection",
 ], function(declare, Destroyable, statefulSync, Collection){
 	
 	return declare(null, {
