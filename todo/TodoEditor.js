@@ -1,24 +1,27 @@
 define([
-	"dojo/_base/declare",
+	"dojo/_base/declare", "dojo/_base/lang",
 	"dijit/_WidgetBase",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin",
-	"dojo/dom-style",
 	"dojo/text!./template.html",
-	"SkFramework/utils/statefulSync",
+	"SkFramework/utils/binding",
 	"./Presenter",
 
 	
 	"dijit/form/TextBox",	"dijit/form/CheckBox",
 	"skTodos/dueDatePicker/DueDatePicker",
 ], function(
-	declare,
+	declare, lang,
 	Widget,					Templated,					WidgetsInTemplate,
-	domStyle,
 	template,
-	statefulSync,
+	binding,
 	Presenter
 ){
+
 	return declare([Widget, Templated, WidgetsInTemplate, Presenter], {
 		templateString: template,
+
+		constructor: function(){
+			this.disabled = false; 
+		},
 
 		startup: function(){
 			this.inherited(arguments);
@@ -26,35 +29,29 @@ define([
 		},
 
 		bind: function(){
+			new binding.Multi(this, this.labelWidget, [
+				{type: "Value", sourceProp: "checked", targetProp: "disabled"},
+				{type: "ValueSync", sourceProp: "label", targetProp: "value"},
+				{type: "Value", sourceProp: "disabled", targetProp: "disabled"},
 
-			statefulSync(this, this.labelWidget, {
-				"label": "value",
+			]);
+			new binding.Multi(this, this.checkWidget, [
+				{type: "ValueSync", sourceProp: "checked", targetProp: "checked"},
+				{type: "Value", sourceProp: "disabled", targetProp: "disabled"},
+			]);
+			new binding.Multi(this, this.dueDateWidget, [
+				{type: "ValueSync", sourceProp: "dueDate", targetProp: "date"},
+				{type: "Value", sourceProp: "disabled", targetProp: "disabled"},
+			]);
+			new binding.Click(this.dueDateButton, this, {
+				method: "setDueDateToToday"
 			});
-			this.watch("checked", function(prop, old, current){
-				this.labelWidget.set("disabled", current);
-			}.bind(this));
-			statefulSync(this, this.checkWidget, {
-				"checked": "checked",
+			new binding.Display(this, this.dueDateWidget, {
+				sourceProp: "dueDate"
 			});
-			statefulSync(this, this.dueDateWidget, {
-				"dueDate": "date",
+			new binding.Display(this, this.dueDateButton, {
+				sourceProp: "dueDate", not: true
 			});
-			this.dueDateButton.on("click", function(){
-				this.set("dueDate", new Date());
-			}.bind(this));
-			function dueDateWidgetToogle(dueDate){
-				domStyle.set(this.dueDateButton.domNode, "display", dueDate ? "none" : "block");
-				domStyle.set(this.dueDateWidget.domNode, "display", dueDate ? "block" : "none");			
-			}
-			dueDateWidgetToogle.bind(this)(this.get("dueDate"));
-			this.watch("dueDate", function(prop, old, current){
-				dueDateWidgetToogle.bind(this)(current);
-			}.bind(this));
-			this.watch("disabled", function(prop, old, current){
-				this.labelWidget.set("disabled", current);
-				this.checkWidget.set("disabled", current);
-				this.dueDateWidget.set("disabled", current);
-			}.bind(this));
 		},
 						
 	});
