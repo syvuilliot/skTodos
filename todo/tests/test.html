@@ -11,7 +11,8 @@
   </head>
 
 <body class="claro">
-	<div id="app"></div>
+	<div id="todoEditor"></div>
+    <div id="todoEditor2"></div>
     <script data-dojo-config="async: false"
         src="../../../dojo/dojo.js">
     </script>
@@ -21,18 +22,33 @@
 			'dojo/Stateful',
 			'sktodos/todo/TodoEditor',
             "SkFramework/utils/statefulSync",
+            'sktodos/model/domain/Todo',
 
-		], function(Stateful, TodoEditor, statefulSync){
-			window.externalModel = {label: "Faire les courses"};
+		], function(Stateful, TodoEditor, statefulSync, Todo){
+			window.externalModel = new Todo({label: "Faire les courses"});
 
 			var todoEditor = window.todoEditor = new TodoEditor({
                 todo: externalModel,
-            }, "app");
+            }, "todoEditor");
 			todoEditor.startup();
 
+            var todoEditor2 = window.todoEditor2 = new TodoEditor({
+                todo: externalModel,
+            }, "todoEditor2");
+            todoEditor2.startup();
 
-            console.assert("The internal model has the same label than the label widget", todoEditor.get("label") === todoEditor.labelWidget.get("value"));
-            console.assert("The internal model 'checked' property is false by default", todoEditor.get("checked") === false);
+            console.assert(externalModel===todoEditor.get("todo") , "If we set a Todo instance on todoEditor, it does not create a new one");
+
+            console.assert(todoEditor.get("label") === todoEditor.labelWidget.get("value"), "The internal model has the same label than the label widget");
+            todoEditor.get("todo").set("label", "test");
+            console.assert(todoEditor.get("label") === "test");
+            console.assert(todoEditor.labelWidget.get("value") === "test");
+
+            todoEditor.set("label", "truc");
+            console.assert(todoEditor.get("todo").get("label") === "truc");
+            console.assert(todoEditor.labelWidget.get("value") === "truc");
+
+            console.assert(todoEditor.get("checked") === false, "The internal model 'checked' property is false by default");
 
             todoEditor.set("checked", true);
             console.assert(todoEditor.checkWidget.get("checked") === true, "When updating the internal model, the view is updated");
