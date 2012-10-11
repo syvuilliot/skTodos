@@ -20,17 +20,17 @@ define([
 		},
 		templateString: template,
 
-		addTodoComp: function(key){
-			var todoComp = new TodoComponent();
-			this.todoComponents[key] = todoComp;
+		addTodo: function(todo, id){
+			var todoComp = new TodoComponent({todo: todo});
+			this.todoComponents[id] = todoComp;
 			this.addChild(todoComp);
 		},
-		removeTodoComp: function(key){
-			this.todoComponents[key].destroy();
+		removeTodo: function(todo, id){
+			this.todoComponents[id].destroy();
 			delete this.todoComponents[key];
 		},
-		getTodoComp: function(key){
-			return this.todoComponents[key];
+		getTodoComp: function(id){
+			return this.todoComponents[id];
 		}
 	});
 });

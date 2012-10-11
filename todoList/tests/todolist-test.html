@@ -11,8 +11,10 @@
   </head>
 
 <body class="claro">
+    <h2>All todos</h2>
 	<div id="all-todos"></div>
-    <div id="urgent-todos"></div>
+    <h2>Active todos</h2>
+    <div id="active-todos"></div>
 
     <script data-dojo-config="async: false"
         src="../../../dojo/dojo.js">
@@ -21,26 +23,30 @@
     <script>
 		require([
 			'dojo/Stateful',
+            'dojo/store/Memory',
+            'dojo/store/Observable',
 			'sktodos/todoList/TodoList',
             'sktodos/model/domain/Todo',
-		], function(Stateful, TodoList, Todo){
-			window.externalModel = [
-                new Todo({id: "1", label: "Faire les courses", checked: true, urgent: true}),
-                new Todo({id: "2", label: "Faire le ménage", done: false, urgent: false, dueDate: new Date(2012, 11, 25)}),
-                new Todo({id: "3", label: "Faire la lessive", urgent: true}),
-            ];
+		], function(Stateful, Memory, Observable, TodoList, Todo){
 
-			var todoList = window.todoList = new TodoList({
-                // todos: externalModel,
+			window.externalModel = Observable(new Memory({
+                data: [
+                    new Todo({id: "1", label: "Faire les courses", checked: true, urgent: true}),
+                    new Todo({id: "2", label: "Faire le ménage", done: false, urgent: false, dueDate: new Date(2012, 11, 25)}),
+                    new Todo({id: "3", label: "Faire la lessive", done: false, urgent: true}),
+                ],
+            }));;
+
+			var allTodos = window.allTodos = new TodoList({
+                todos: externalModel.query(),
 			}, "all-todos");
-			todoList.startup();
+			allTodos.startup();
 
-            todoList.set("todos", externalModel);//must be done after startup so binding is in place
+            var activeTodos = window.activeTodos = new TodoList({
+                todos: externalModel.query({done: false}),
+            }, "active-todos");
+            activeTodos.startup();
 
-/*            mainMngr.add("0", externalModel[0]);
-            mainMngr.add("1", externalModel[1]);
-            mainMngr.add("2", externalModel[2]);
-*/
 /*            console.assert("The internal model has the same label than the label widget", mainMngr.get("model").get("label") === mainMngr.get("labelWidget").get("value"));
             console.assert("The internal model 'checked' property is false by default", mainMngr.get("model").get("checked") === false);
 

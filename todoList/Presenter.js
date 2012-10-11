@@ -1,12 +1,9 @@
 define([
 	"dojo/_base/declare",
-	"dijit/Destroyable",
-	"SkFramework/utils/statefulSync",
-	"skTodos/utils/Collection",
-], function(declare, Destroyable, statefulSync, Collection){
+], function(declare){
 	
 	return declare(null, {
-		constructor: function(params){
+/*		constructor: function(params){
 			this.todos = new Collection();
 			this.disabled = null;
 		},
@@ -15,5 +12,5 @@ define([
 				this.todos.add(key+"", todo);
 			}.bind(this));
 		},
-	});
+*/	});
 });
