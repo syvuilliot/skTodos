@@ -28,31 +28,37 @@ define([
 			this.bind();
 		},
 
-		bind: function(){
+		bind: function(){ this.own(
 			new binding.Multi(this, this.labelWidget, [
 				{type: "Value", sourceProp: "checked", targetProp: "disabled"},
 				{type: "ValueSync", sourceProp: "label", targetProp: "value"},
 				{type: "Value", sourceProp: "disabled", targetProp: "disabled"},
 
-			]);
+			]),
 			new binding.Multi(this, this.checkWidget, [
 				{type: "ValueSync", sourceProp: "checked", targetProp: "checked"},
 				{type: "Value", sourceProp: "disabled", targetProp: "disabled"},
-			]);
+			]),
 			new binding.Multi(this, this.dueDateWidget, [
 				{type: "ValueSync", sourceProp: "dueDate", targetProp: "date"},
 				{type: "Value", sourceProp: "disabled", targetProp: "disabled"},
-			]);
+			]),
 			new binding.Click(this.dueDateButton, this, {
 				method: "setDueDateToToday"
-			});
+			}),
 			new binding.Display(this, this.dueDateWidget, {
 				sourceProp: "dueDate"
-			});
+			}),
 			new binding.Display(this, this.dueDateButton, {
 				sourceProp: "dueDate", not: true
-			});
-		},
+			})
+		);},
+
+		set: function() {
+			if (!this._destroyed) {
+				this.inherited(arguments);
+			}
+		}
 						
 	});
 });

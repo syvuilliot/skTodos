@@ -16,7 +16,7 @@ define([
 	
 	return declare([Widget, Templated, WidgetsInTemplate, Container], {
 		constructor: function(){
-			this.todoComponents = {};
+			this.todoComponents = {}; 
 		},
 		templateString: template,
 
@@ -27,7 +27,7 @@ define([
 		},
 		removeTodo: function(todo, id){
 			this.todoComponents[id].destroy();
-			delete this.todoComponents[key];
+			delete this.todoComponents[id];
 		},
 		getTodoComp: function(id){
 			return this.todoComponents[id];

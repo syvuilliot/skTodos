@@ -29,13 +29,14 @@
             'sktodos/model/domain/Todo',
 		], function(Stateful, Memory, Observable, TodoList, Todo){
 
+            var t1 = window.t1 = new Todo({id: "1", label: "Faire les courses", checked: true, urgent: true});
+            var t2 = window.t2 = new Todo({id: "2", label: "Faire le ménage", checked: false, urgent: false, dueDate: new Date(2012, 11, 25)});
+            var t3 = window.t3 = new Todo({id: "3", label: "Faire la lessive", checked: false, urgent: true});
+
 			window.externalModel = Observable(new Memory({
-                data: [
-                    new Todo({id: "1", label: "Faire les courses", checked: true, urgent: true}),
-                    new Todo({id: "2", label: "Faire le ménage", done: false, urgent: false, dueDate: new Date(2012, 11, 25)}),
-                    new Todo({id: "3", label: "Faire la lessive", done: false, urgent: true}),
-                ],
+                data: [t1, t2, t3],
             }));;
+
 
 			var allTodos = window.allTodos = new TodoList({
                 todos: externalModel.query(),
@@ -43,26 +44,16 @@
 			allTodos.startup();
 
             var activeTodos = window.activeTodos = new TodoList({
-                todos: externalModel.query({done: false}),
+                todos: externalModel.query({checked: false}),
             }, "active-todos");
             activeTodos.startup();
+            
+            externalModel.data.forEach(function(todo){
+                todo.watch("checked", function(){
+                    externalModel.put(todo);
+                });
+            });
 
-/*            console.assert("The internal model has the same label than the label widget", mainMngr.get("model").get("label") === mainMngr.get("labelWidget").get("value"));
-            console.assert("The internal model 'checked' property is false by default", mainMngr.get("model").get("checked") === false);
-
-            mainMngr.get("model").set("checked", true);
-            console.assert(mainMngr.get("checkWidget").get("checked") === true, "When updating the internal model, the view is updated");
-            console.assert(mainMngr.get("labelWidget").get("disabled") === true, "When updating the internal model, the view is updated");
-            try {
-                mainMngr.model.set("label", "Faire la lessive");
-            }
-            catch(err){
-                console.assert(err, "We cannot change the label of an already compelted task");
-            }
-
-            mainMngr.get("checkWidget").set("checked", false);
-            console.assert(mainMngr.get("model").get("checked") === false, "When updating the view, the internal model is updated");
-*/
 
 		});
 	</script>

@@ -11,11 +11,13 @@ define([
 		constructor: function(params){
 			this.todo = null;
 			this.disabled = null;
-			this.todoStatefulSyncHandler = null;
+			this.todoStatefulSyncHandler = {
+				remove: function(){},
+			};
 		},
 		_setTodoAttr: function(value){
 			var todo;
-			if(this.todoStatefulSyncHandler){this.todoStatefulSyncHandler.remove();}
+			this.todoStatefulSyncHandler.remove();
 			//TODO: I don't know why the instanceof Todo test does not work
 			// if(value instanceof Todo){
 				todo = value;
@@ -30,13 +32,13 @@ define([
 				checked: "checked",
 				dueDate: "dueDate",
 			});
+			this.own(this.todoStatefulSyncHandler);
 		},
 		setDueDateToToday: function(){
 			this.set("dueDate", new Date());
 		},
 		_setLabelAttr: function(value){
 			this._set("label", value);
-			console.log("label setter called with", value);
 		}
 	});
 });
