@@ -29,7 +29,8 @@
         ], function(
             App
         ) {
-            new App({}, "app").startup();
+            window.app = new App();
+            app.view.placeAt("app");
         });
 	</script>
 </body>
