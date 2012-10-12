@@ -1,7 +1,7 @@
 define([
 	'dojo/_base/declare',
 	'dojo/Stateful',
-	'dijit/Destroyable', 'dijit/_WidgetBase',	'dijit/_TemplatedMixin',
+	'dijit/Destroyable', 'dijit/_WidgetBase',	'dijit/_TemplatedMixin', "dijit/_WidgetsInTemplateMixin",
 	'dojo/text!./v1.html',
     'dojo/store/Memory',
     'dojo/store/Observable',
@@ -10,10 +10,12 @@ define([
     '../fixtures/todos',
 	"skTodos/model/domain/Todo",
 
+	"dijit/form/TextBox",
+
 ], function(
 	declare,
 	Stateful,
-	Destroyable, Widget,					Templated,
+	Destroyable, Widget,					Templated, WidgetsInTemplate,
 	template,
 	Memory, Observable,
 	binding,
@@ -26,21 +28,33 @@ define([
 		_todosSetter: function(value){
 			//create an observable collection of Todo instances
 			//TODO: only do it when it is necessary otherwise use the value directly
-			var store = Observable(new Memory());
+			var todosStore = this.todosStore = Observable(new Memory());
 			if (value && value.forEach){
 				value.forEach(function(value){
-					var todo = new Todo(value);
-					store.put(todo);
-					todo.watch(function(){
-						store.put(todo);
-					});
-				});
+					this.addTodo(value);
+				}.bind(this));
 			}
-			this.todos = store.query();
+			this.set("activeTodos", todosStore.query({checked: false}));
+			this.set("completedTodos", todosStore.query({checked: true}));
+		},
+		addTodo: function(value){
+			var todo = new Todo(value);
+			this.todosStore.put(todo);
+			todo.watch(function(){
+				this.todosStore.put(todo);
+			}.bind(this));
+			//TODO: remove watch handler when todo is removed from store and when a nex store is created
+		},
+		addTodoHandler: function(){
+			var label = this.get("newTodoLabel");
+			if (label) { //only create a todo if label is not empty
+				this.addTodo({label: label, checked: false});
+				this.set("newTodoLabel", "");
+			}
 		}
 	});
 
-	var View = declare([Widget, Templated], {
+	var View = declare([Widget, Templated, WidgetsInTemplate], {
 		templateString: template,
 	});
 
@@ -54,8 +68,10 @@ define([
 		},
 		render: function(){
 			this.view = new View();
-			this.todoList = new TodoList();
-			this.todoList.view.placeAt(this.view.todoListNode);
+			this.activeTodos = new TodoList();
+			this.activeTodos.view.placeAt(this.view.activeTodosNode);
+			this.completedTodos = new TodoList();
+			this.completedTodos.view.placeAt(this.view.completedTodosNode);
 			this.view.startup();
 
 		},
@@ -72,10 +88,24 @@ define([
 		},
 
 		bind: function() {
-			this.own(new binding.Value(this.presenter, this.todoList, {
-				sourceProp: "todos",
-				targetProp: "todos",
-			}));
+			this.own(
+				new binding.Value(this.presenter, this.activeTodos, {
+					sourceProp: "activeTodos",
+					targetProp: "todos",
+				}),
+				new binding.Value(this.presenter, this.completedTodos, {
+					sourceProp: "completedTodos",
+					targetProp: "todos",
+				}),
+				new binding.ValueSync(this.presenter, this.view.addTodoWidget, {
+					sourceProp: "newTodoLabel",
+					targetProp: "value",
+				}),
+				new binding.Event(this.view.addTodoWidget, this.presenter, {
+					event: "change",
+					method: "addTodoHandler",
+				})
+			);
 		},
 	});
 });
