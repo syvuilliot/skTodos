@@ -25,8 +25,8 @@
 			'dojo/Stateful',
             'dojo/store/Memory',
             'dojo/store/Observable',
-			'sktodos/todoList/TodoList',
-            'sktodos/model/domain/Todo',
+			'skTodos/todoList/TodoList',
+            'skTodos/model/domain/Todo',
 		], function(Stateful, Memory, Observable, TodoList, Todo){
 
             var t1 = window.t1 = new Todo({id: "1", label: "Faire les courses", checked: true, urgent: true});
@@ -40,13 +40,15 @@
 
 			var allTodos = window.allTodos = new TodoList({
                 todos: externalModel.query(),
-			}, "all-todos");
-			allTodos.startup();
+			});
+            allTodos.view.placeAt("all-todos");
+			// allTodos.startup();
 
             var activeTodos = window.activeTodos = new TodoList({
                 todos: externalModel.query({checked: false}),
-            }, "active-todos");
-            activeTodos.startup();
+            });
+            activeTodos.view.placeAt("active-todos");
+            // activeTodos.startup();
             
             externalModel.data.forEach(function(todo){
                 todo.watch("checked", function(){

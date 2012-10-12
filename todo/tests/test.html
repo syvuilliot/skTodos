@@ -22,37 +22,39 @@
 			'dojo/Stateful',
 			'sktodos/todo/TodoEditor',
             "SkFramework/utils/statefulSync",
-            'sktodos/model/domain/Todo',
+            'skTodos/model/domain/Todo',
 
 		], function(Stateful, TodoEditor, statefulSync, Todo){
 			window.externalModel = new Todo({label: "Faire les courses"});
 
 			var todoEditor = window.todoEditor = new TodoEditor({
                 todo: externalModel,
-            }, "todoEditor");
-			todoEditor.startup();
+            });
+            todoEditor.view.placeAt("todoEditor");
 
             var todoEditor2 = window.todoEditor2 = new TodoEditor({
                 todo: externalModel,
-            }, "todoEditor2");
-            todoEditor2.startup();
+            });
+            todoEditor2.view.placeAt("todoEditor2");
 
             console.assert(externalModel===todoEditor.get("todo") , "If we set a Todo instance on todoEditor, it does not create a new one");
 
-            console.assert(todoEditor.get("label") === todoEditor.labelWidget.get("value"), "The internal model has the same label than the label widget");
+            console.assert(todoEditor.get("label") === todoEditor.view.labelWidget.get("value"), "The internal model has the same label than the label widget");
+            //trying to change label on todo model
             todoEditor.get("todo").set("label", "test");
             console.assert(todoEditor.get("label") === "test");
-            console.assert(todoEditor.labelWidget.get("value") === "test");
+            console.assert(todoEditor.view.labelWidget.get("value") === "test");
 
+            //trying to change label on todoEditor
             todoEditor.set("label", "truc");
             console.assert(todoEditor.get("todo").get("label") === "truc");
-            console.assert(todoEditor.labelWidget.get("value") === "truc");
+            console.assert(todoEditor.view.labelWidget.get("value") === "truc");
 
             console.assert(todoEditor.get("checked") === false, "The internal model 'checked' property is false by default");
 
             todoEditor.set("checked", true);
-            console.assert(todoEditor.checkWidget.get("checked") === true, "When updating the internal model, the view is updated");
-            console.assert(todoEditor.labelWidget.get("disabled") === true, "When updating the internal model, the view is updated");
+            console.assert(todoEditor.view.checkWidget.get("checked") === true, "When updating the internal model, the view is updated");
+            console.assert(todoEditor.view.labelWidget.get("disabled") === true, "When updating the internal model, the view is updated");
             try {
                 todoEditor.set("label", "Faire la lessive");
             }
@@ -60,8 +62,10 @@
                 console.assert(err, "We cannot change the label of an already compelted task");
             }
 
-            todoEditor.checkWidget.set("checked", false);
+            todoEditor.view.checkWidget.set("checked", false);
             console.assert(todoEditor.get("checked") === false, "When updating the view, the internal model is updated");
+
+            //TODO: test setting "disabled" to true then to false and see if checkWidget value is aletered
 
 
 		});
