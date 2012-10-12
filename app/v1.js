@@ -43,14 +43,19 @@ define([
 			todo.watch(function(){
 				this.todosStore.put(todo);
 			}.bind(this));
-			//TODO: remove watch handler when todo is removed from store and when a nex store is created
+			//TODO: remove watch handler when todo is removed from store and when a new store is created
 		},
-		addTodoHandler: function(){
+		createTodo: function(){
 			var label = this.get("newTodoLabel");
 			if (label) { //only create a todo if label is not empty
 				this.addTodo({label: label, checked: false});
 				this.set("newTodoLabel", "");
 			}
+		},
+		removeCompletedTodos: function(){
+			this.todosStore.query({checked: true}).forEach(function(todo){
+				this.todosStore.remove(todo.id);
+			}.bind(this));
 		}
 	});
 
@@ -103,7 +108,10 @@ define([
 				}),
 				new binding.Event(this.view.addTodoWidget, this.presenter, {
 					event: "change",
-					method: "addTodoHandler",
+					method: "createTodo",
+				}),
+				new binding.Click(this.view.removeCompletedTodosButton, this.presenter, {
+					method: "removeCompletedTodos",
 				})
 			);
 		},
