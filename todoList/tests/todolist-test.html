@@ -42,13 +42,12 @@
                 todos: externalModel.query(),
 			});
             allTodos.view.placeAt("all-todos");
-			// allTodos.startup();
 
             var activeTodos = window.activeTodos = new TodoList({
-                todos: externalModel.query({checked: false}),
+                // todos: externalModel.query({checked: false}),
             });
+            activeTodos.set("todos", externalModel.query({checked: false}));
             activeTodos.view.placeAt("active-todos");
-            // activeTodos.startup();
             
             externalModel.data.forEach(function(todo){
                 todo.watch("checked", function(){

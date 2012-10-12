@@ -61,8 +61,6 @@ define([
 	});
 
 	return declare([Stateful, Destroyable], {
-		templateString: template,
-
 		constructor: function(params){
 			this.disabled = false;
 			this.presenter = new Presenter();

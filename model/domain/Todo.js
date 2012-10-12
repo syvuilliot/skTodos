@@ -1,10 +1,9 @@
 define([
 	"dojo/_base/declare",
 	"dojo/Stateful",
-	"dojo/Evented",
-], function(declare, Stateful, Evented){
+], function(declare, Stateful){
 	
-	return declare([Stateful, Evented], {
+	return declare([Stateful], {
 		_checkedGetter: function() {
 			return this.checked || false;
 		},

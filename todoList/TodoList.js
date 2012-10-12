@@ -48,7 +48,6 @@ define([
 				addMethod: "addTodo",
 				removeMethod: "removeTodo",
 			}));
-			//TODO: update binding when todos is changed
 		},
 
 		addTodo: function(todo, id){
