@@ -1,12 +1,14 @@
 define([
 	'dojo/_base/declare',
 	'dojo/Stateful',
-	'dijit/Destroyable', 'dijit/_WidgetBase',	'dijit/_TemplatedMixin', "dijit/_WidgetsInTemplateMixin",
+	'dijit/Destroyable', 'dijit/_WidgetBase',	'dijit/_TemplatedMixin', "dijit/_WidgetsInTemplateMixin", "dijit/_Container",
 	'dojo/text!./v1.html',
     'dojo/store/Memory',
     'dojo/store/Observable',
     "SkFramework/utils/binding",
-    '../todoList/TodoList',
+    "dojo/on",
+    '../todo/TodoEditor',
+    '../remover/Remover',
     '../fixtures/todos',
 	"skTodos/model/domain/Todo",
 
@@ -15,11 +17,13 @@ define([
 ], function(
 	declare,
 	Stateful,
-	Destroyable, Widget,					Templated, WidgetsInTemplate,
+	Destroyable, Widget,					Templated, WidgetsInTemplate, Container,
 	template,
 	Memory, Observable,
 	binding,
-	TodoList,
+	on,
+	TodoEditor,
+	Remover,
     todosFixtures,
     Todo
 ) {
@@ -52,35 +56,54 @@ define([
 				this.set("newTodoLabel", "");
 			}
 		},
+		removeTodo: function(todo){
+			this.todosStore.remove(todo.id);
+		},
 		removeCompletedTodos: function(){
 			this.todosStore.query({checked: true}).forEach(function(todo){
-				this.todosStore.remove(todo.id);
+				this.removeTodo(todo);
 			}.bind(this));
 		}
 	});
 
+	var ListContainer = declare([Widget, Container], {
+	});
+
 	var View = declare([Widget, Templated, WidgetsInTemplate], {
 		templateString: template,
+		buildRendering: function(){
+			this.inherited(arguments);
+			this.activeTodosContainer = new ListContainer({}, this.activeTodosNode);
+			this.completedTodosContainer = new ListContainer({}, this.completedTodosNode);
+		},
+		addActiveTodo: function(){
+			return 
+		},
+		startup: function(){
+			this.inherited(arguments);
+			this.activeTodosContainer.startup();
+			this.completedTodosContainer.startup();
+		},
 	});
+
+
 
 	return declare([Stateful, Destroyable], {
 		constructor: function(params){
+			//init variables
+			this.activeTodoComponents = {};
+			this.completedTodoComponents = {};
+
+			//create internal machinery
 			this.presenter = new Presenter();
-			this.render();
+			this.view = new View();
+			this.view.startup();
 			this.bind();
 			//load data
 			this.set("todos", todosFixtures);
 		},
-		render: function(){
-			this.view = new View();
-			this.activeTodos = new TodoList();
-			this.activeTodos.view.placeAt(this.view.activeTodosNode);
-			this.completedTodos = new TodoList();
-			this.completedTodos.view.placeAt(this.view.completedTodosNode);
-			this.view.startup();
-
-		},
 		destroy: function(){
+			this.inherited(arguments);
 			this.view.destroy();
 		},
 
@@ -94,13 +117,15 @@ define([
 
 		bind: function() {
 			this.own(
-				new binding.Value(this.presenter, this.activeTodos, {
+				new binding.ObservableQueryResult(this.presenter, this, {
 					sourceProp: "activeTodos",
-					targetProp: "todos",
+					addMethod: "addActiveTodo",
+					removeMethod: "removeActiveTodo",
 				}),
-				new binding.Value(this.presenter, this.completedTodos, {
+				new binding.ObservableQueryResult(this.presenter, this, {
 					sourceProp: "completedTodos",
-					targetProp: "todos",
+					addMethod: "addCompletedTodo",
+					removeMethod: "removeCompletedTodo",
 				}),
 				new binding.ValueSync(this.presenter, this.view.addTodoWidget, {
 					sourceProp: "newTodoLabel",
@@ -114,6 +139,32 @@ define([
 					method: "removeCompletedTodos",
 				})
 			);
+		},
+
+		addActiveTodo: function(todo, id){
+			//we don't have to observe the value (Todo instance) corresponding to id, since we will remove the component (and never change it's todo value) 
+			var todoComp = new TodoEditor({todo: todo});
+			var removerComp = new Remover();
+			this.activeTodoComponents[id] = {todoComp: todoComp, removerComp: removerComp};
+			removerComp.view.addChild(todoComp.view);
+			this.view.activeTodosContainer.addChild(removerComp.view);
+			removerComp.own(on(removerComp, "remove", function(ev){
+				this.presenter.removeTodo(todo);
+			}.bind(this)));
+		},
+		removeActiveTodo: function(todo, id){
+			this.activeTodoComponents[id].todoComp.destroy();
+			this.activeTodoComponents[id].removerComp.destroy();
+			delete this.activeTodoComponents[id];
+		},
+		addCompletedTodo: function(todo, id){
+			var todoComp = new TodoEditor({todo: todo});
+			this.completedTodoComponents[id] = todoComp;
+			this.view.completedTodosContainer.addChild(todoComp.view);
+		},
+		removeCompletedTodo: function(todo, id){
+			this.completedTodoComponents[id].destroy();
+			delete this.completedTodoComponents[id];
 		},
 	});
 });

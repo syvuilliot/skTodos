@@ -69,6 +69,7 @@ define([
 			this.bind();
 		},
 		destroy: function(){
+			this.inherited(arguments);
 			this.view.destroy();
 		},
 
