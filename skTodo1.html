@@ -21,21 +21,16 @@
 
 <body class="sk">
 	<div id="app"></div>
-    <script data-dojo-config="async: false"
+    <script data-dojo-config="async: true"
             src="../dojo/dojo.js"></script>
     <script>
-		require([
-			'dojo/Stateful',
-			'sktodos/todo/Todo',
-		], function(Stateful, TodoManager){
-			window.externalModel = new Stateful({label: "Faire les courses"});
-
-			var mainMngr = window.mainMngr = new TodoManager({
-				model: externalModel,
-			}, "app");
-			mainMngr.startup();
-			
-		});
+        require([
+            'skTodos/app/v1'
+        ], function(
+            App
+        ) {
+            new App({}, "app").startup();
+        });
 	</script>
 </body>
 </html>
