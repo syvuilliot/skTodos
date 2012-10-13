@@ -53,6 +53,17 @@ define([
 	var View = declare([Widget, Templated, WidgetsInTemplate], {
 		templateString: template,
 
+		postCreate: function(){
+			this.inherited(arguments);
+			//hack to prevent checkboxWidget to call set when it is destroyed
+			var checkWidgetSetMethod = this.checkWidget.set;
+			this.checkWidget.set = function(){
+				if (!this._destroyed) {
+					checkWidgetSetMethod.apply(this, arguments);
+				}
+			};
+		},
+
 		set: function() {
 			if (!this._destroyed) {
 				this.inherited(arguments);
