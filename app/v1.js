@@ -1,6 +1,5 @@
 define([
-	'dojo/_base/declare',
-	'dojo/Stateful',
+	'dojo/_base/declare',	'dojo/Stateful',
 	"dojo/dom-construct",
 	'dijit/Destroyable', 'dijit/_WidgetBase',	'dijit/_TemplatedMixin', "dijit/_WidgetsInTemplateMixin", "dijit/_Container",
 	'dojo/text!./v1.html',
@@ -12,12 +11,10 @@ define([
     '../remover/Remover',
     '../fixtures/todos',
 	"skTodos/model/domain/Todo",
-	"dijit/form/Button",
-	"dijit/form/TextBox",
+	"dijit/form/Form",	"dijit/form/Button",	"dijit/form/TextBox",
 
 ], function(
-	declare,
-	Stateful,
+	declare,				Stateful,
 	domConstruct,
 	Destroyable, Widget,					Templated, WidgetsInTemplate, Container,
 	template,
@@ -28,7 +25,7 @@ define([
 	Remover,
     todosFixtures,
     Todo,
-    Button
+    Form,				Button,					TextBox
 ) {
 
 	var Presenter = declare([Stateful, Destroyable], {
@@ -87,6 +84,19 @@ define([
 			this.inherited(arguments);
 			// this.activeTodosContainer = new ListContainer({}, this.activeTodosNode);
 			this.completedTodosContainer = new ListContainer({}, this.completedTodosNode);
+			
+			this.addTodoForm = new Form({ 'class':'new-todo' }, this.newTodoNode);
+			this.addTodoLabel = new TextBox({
+				name: 'label',
+				placeHolder: "Add new task ..."
+			}).placeAt(this.addTodoForm);
+			new Button({
+				label: "+",
+				type: 'submit'
+			}).placeAt(this.addTodoForm);
+			this.addTodoForm.on('submit', function(ev) {
+				ev.preventDefault();
+			});
 		},
 		addActiveTodo: function(index){
 			//I don't create a dijit to see how it looks like
@@ -158,12 +168,12 @@ define([
 					addMethod: "addCompletedTodo",
 					removeMethod: "removeCompletedTodo",
 				}),
-				new binding.ValueSync(this.presenter, this.view.addTodoWidget, {
+				new binding.ValueSync(this.presenter, this.view.addTodoLabel, {
 					sourceProp: "newTodoLabel",
 					targetProp: "value",
 				}),
-				new binding.Event(this.view.addTodoWidget, this.presenter, {
-					event: "change",
+				new binding.Event(this.view.addTodoForm, this.presenter, {
+					event: "submit",
 					method: "createTodo",
 				}),
 				new binding.Click(this.view.removeCompletedTodosButton, this.presenter, {

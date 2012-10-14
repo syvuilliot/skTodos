@@ -6,8 +6,20 @@
 }
 
 .flex(@ratio) {
--webkit-box-flex: @ratio;
--moz-box-flex: @ratio;
--o-box-flex: @ratio;
-box-flex: @ratio;
+  -webkit-box-flex: @ratio;
+  -moz-box-flex: @ratio;
+  -o-box-flex: @ratio;
+  box-flex: @ratio;
+}
+
+.box-orient(@ratio) {
+  -webkit-box-orient: @ratio;
+  -moz-box-orient: @ratio;
+  -o-box-orient: @ratio;
+  box-orient: @ratio;
+}
+
+.border-box {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
 }
