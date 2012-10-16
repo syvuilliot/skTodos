@@ -226,7 +226,7 @@ define([
 			this.view.removeActiveTodo(id);
 		},
 		updateActiveTodosCounter: function(){
-			this.view.activeTodoCounter.innerText = this.presenter.get("activeTodos").length;
+			this.view.activeTodoCounter.innerHTML = this.presenter.get("activeTodos").length;
 		},
 		addCompletedTodo: function(todo, id){
 			var todoComp = new TodoEditor({todo: todo});
@@ -238,7 +238,7 @@ define([
 			delete this.completedTodoComponents[id];
 		},
 		updateCompletedTodosCounter: function(){
-			this.view.completedTodoCounter.innerText = this.presenter.get("completedTodos").length;
+			this.view.completedTodoCounter.innerHTML = this.presenter.get("completedTodos").length;
 		},
 	});
 });
