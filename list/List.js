@@ -30,22 +30,27 @@ define([
 		bind: function(){
 			this.own(new binding.ObservableQueryResult(this._presenter, this, {
 				sourceProp: "value",
-				addMethod: "_addCmp",
-				removeMethod: "_removeCmp",
+				addMethod: "_addItem",
+				removeMethod: "_removeItem",
 			}));
 		},
-
-		_addCmp: function(item, id) {
+		
+		_addItem: function(item, id) {
 			var cmp = new this.componentClass();
 			cmp.set('value', item);
+			this._addCmp(cmp, id);
+		},
+		
+		_addCmp: function(cmp, id) {
 			this._components[id] = cmp;
 			this.view.addChild(cmp.view);
-			return cmp;
 		},
-		_removeCmp: function(todo, id){
+		
+		_removeItem: function(item, id){
 			this._components[id].destroy();
 			delete this._components[id];
 		},
+		
 		_getCmp: function(id){
 			return this._components[id];
 		}

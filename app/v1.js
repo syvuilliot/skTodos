@@ -1,33 +1,25 @@
 define([
-	'dojo/_base/declare',	'dojo/Stateful',
-	"dojo/dom-construct",
-	'dijit/Destroyable', 'dijit/_WidgetBase',	'dijit/_TemplatedMixin', "dijit/_WidgetsInTemplateMixin", "dijit/_Container",
-	'dojo/text!./v1.html',
-    'dojo/store/Memory',
-    'dojo/store/Observable',
-    "SkFramework/utils/binding",
-    "dojo/on",
-    '../todo/TodoEditor',	'../list/List',
-    '../remover/Remover',
+	'dojo/_base/declare',	'dojo/dom-construct',
+	'dijit/_WidgetBase',	'dijit/_TemplatedMixin',	"dijit/_WidgetsInTemplateMixin",	"dijit/_Container",
+	'dojo/store/Memory',	'dojo/store/Observable',
+    'SkFramework/component/Component',	'SkFramework/component/Presenter',	'SkFramework/utils/binding',
+    '../todo/TodoEditor',	'../list/List',	'../removableList/List',
     '../fixtures/todos',
 	"../model/domain/Todo",
 	"dijit/form/Form",	"dijit/form/Button",	"dijit/form/TextBox",
-
+	'dojo/text!./v1.html'
 ], function(
-	declare,				Stateful,
-	domConstruct,
-	Destroyable, Widget,					Templated, WidgetsInTemplate, Container,
-	template,
-	Memory, Observable,
-	binding,
-	on,
-	TodoEditor,				List,
-	Remover,
+	declare,				domConstruct,
+	Widget,					Templated,					WidgetsInTemplate,					Container,
+	Memory,					Observable,
+	Component,							Presenter,							binding,
+	TodoEditor,				List,			RemovableList,
     todosFixtures,
     Todo,
-    Form,				Button,					TextBox
+    Form,				Button,					TextBox,
+    template
 ) {
-	var Presenter = declare([Stateful, Destroyable], {
+	var Presenter = declare([Presenter], {
 		_todosSetter: function(value){
 			//create an observable collection of Todo instances
 			//TODO: only do it when it is necessary otherwise use the value directly
@@ -55,8 +47,11 @@ define([
 				this.set("newTodoLabel", "");
 			}
 		},
-		removeTodo: function(todo){
+		removeTodo: function(todo) {
 			this.todosStore.remove(todo.id);
+		},
+		removeTodoHandler: function(ev){
+			this.removeTodo(ev.item);
 		},
 		removeCompletedTodos: function(){
 			this.todosStore.query({checked: true}).forEach(function(todo){
@@ -65,19 +60,12 @@ define([
 		}
 	});
 
-/*	var RemovableTodo = declare([Widget, Templated, WidgetsInTemplate], {
-		templateString: '<div>'+
-				'<span data-dojo-attach-point="todoEditorNode"></span>'+
-				'<span data-dojo-attach-point="removeButtonNode"></span>'+
-			'</div>',
-	});
-*/
 	var View = declare([Widget, Templated, WidgetsInTemplate], {
 		constructor: function(){
 			this.activeTodoViews = {};
 		},
 		templateString: template,
-		buildRendering: function(){
+		buildRendering: function() {
 			this.inherited(arguments);
 			
 			this.addTodoForm = new Form({ 'class':'new-todo' }, this.newTodoNode);
@@ -92,44 +80,18 @@ define([
 			this.addTodoForm.on('submit', function(ev) {
 				ev.preventDefault();
 			});
-		},
-		addActiveTodo: function(index){
-			//I don't create a dijit to see how it looks like
-			var outerDiv = domConstruct.create("div", null, this.activeTodosNode);
-			var todoEditor = new TodoEditor();
-			todoEditor.view.placeAt(outerDiv);
-			var removeButton = new Button({label: "Remove"});
-			removeButton.placeAt(outerDiv);
-			removeButton.startup();
-			var references = {
-				outerDiv: outerDiv,
-				todoEditor: todoEditor,
-				removeButton: removeButton,
-			};
-			this.activeTodoViews[index]  = references;
-			return references;
-		},
-		removeActiveTodo: function(index){
-			var references = this.activeTodoViews[index];
-			references.todoEditor.destroy();
-			references.removeButton.destroy();
-			domConstruct.destroy(references.outerDiv);
-		},
-		startup: function(){
-			this.inherited(arguments);
-		},
+		}
 	});
 
 
-
-	return declare([Stateful, Destroyable], {
+	return declare([Component], {
 		constructor: function(params){
 			//init variables
 			this.activeTodoComponentsHandlers = {};
 			this.completedTodoComponents = {};
 
 			//create internal machinery
-			this.presenter = new Presenter();
+			this._presenter = new Presenter();
 			this.view = new View();
 			this.view.startup();
 			
@@ -138,96 +100,57 @@ define([
 			});
 			this.completedTodosCmp.view.placeAt(this.view.completedTodosNode, 'replace');
 			
+			this.activeTodosCmp = new RemovableList({
+				componentClass: TodoEditor
+			});
+			this.activeTodosCmp.view.placeAt(this.view.activeTodosNode, 'replace');
+			
 			//load data
 			this.set("todos", todosFixtures);
-			
-			this.bind();
-		},
-		destroy: function(){
-			this.inherited(arguments);
-			this.view.destroy();
-		},
-
-		get: function() {
-			return this.presenter.get.apply(this.presenter, arguments);
-		},
-
-		set: function() {
-			return this.presenter.set.apply(this.presenter, arguments);
 		},
 
 		bind: function() {
 			this.own(
-				new binding.ObservableQueryResult(this.presenter, this, {
-					sourceProp: "activeTodos",
-					addMethod: "addActiveTodo",
-					removeMethod: "removeActiveTodo",
-				}),
-				new binding.ValueSync(this.presenter, this.view.addTodoLabel, {
+				new binding.ValueSync(this._presenter, this.view.addTodoLabel, {
 					sourceProp: "newTodoLabel",
 					targetProp: "value",
 				}),
-				new binding.Event(this.view.addTodoForm, this.presenter, {
+				new binding.Event(this.view.addTodoForm, this._presenter, {
 					event: "submit",
 					method: "createTodo",
 				}),
-				new binding.Click(this.view.removeCompletedTodosButton, this.presenter, {
+				new binding.Click(this.view.removeCompletedTodosButton, this._presenter, {
 					method: "removeCompletedTodos",
 				}),
-				new binding.ObservableQueryResult(this.presenter, this, {
+				new binding.Value(this._presenter, this.activeTodosCmp, {
+					sourceProp: "activeTodos",
+					targetProp: "value"
+				}),
+				new binding.Value(this._presenter, this.completedTodosCmp, {
+					sourceProp: "completedTodos",
+					targetProp: "value"
+				}),
+				new binding.Event(this.activeTodosCmp, this._presenter, {
+					event: "remove",
+					method: "removeTodoHandler",
+				}),
+				new binding.ObservableQueryResult(this._presenter, this, {
 					sourceProp: "activeTodos",
 					addMethod: "updateActiveTodosCounter",
 					removeMethod: "updateActiveTodosCounter",
 				}),
-				new binding.Value(this.presenter, this.completedTodosCmp, {
+				new binding.ObservableQueryResult(this._presenter, this, {
 					sourceProp: "completedTodos",
-					targetProp: "value"
+					addMethod: "updateCompletedTodosCounter",
+					removeMethod: "updateCompletedTodosCounter",
 				})
 			);
 		},
-
-		addActiveTodo: function(todo, id){
-			// 1) create view
-			var todoView = this.view.addActiveTodo(id); //this is not really the view but only references to necessary sub components
-			// 2) bind it to presenter
-			this.activeTodoComponentsHandlers[id] = [
-				on(todoView.removeButton, "click", function(ev){
-					this.presenter.removeTodo(todo);
-				}.bind(this)),
-				new binding.Value(this.presenter, todoView.removeButton, {
-					sourceProp: "disabled",
-					targetProp: "disabled",
-				}),
-				new binding.Value(this.presenter, todoView.todoEditor, {
-					sourceProp: "disabled",
-					targetProp: "disabled",
-				})
-			];
-			//we don't have to observe the value (Todo instance) corresponding to id, since we will remove the component (and never change it's todo value) 
-			todoView.todoEditor.set("value", todo);
-		},
-		removeActiveTodo: function(todo, id){
-			this.activeTodoComponentsHandlers[id].forEach(function(handler){
-				handler.remove();
-			});
-			delete this.activeTodoComponentsHandlers[id];
-			this.view.removeActiveTodo(id);
-		},
 		updateActiveTodosCounter: function(){
-			this.view.activeTodoCounter.innerHTML = this.presenter.get("activeTodos").length;
-		},
-		addCompletedTodo: function(todo, id){
-			var todoComp = new TodoEditor();//{todo: todo});
-			todoComp.set('todo', todo);
-			this.completedTodoComponents[id] = todoComp;
-			this.view.completedTodosContainer.addChild(todoComp.view);
-		},
-		removeCompletedTodo: function(todo, id){
-			this.completedTodoComponents[id].destroy();
-			delete this.completedTodoComponents[id];
+			this.view.activeTodoCounter.innerHTML = this._presenter.get("activeTodos").length;
 		},
 		updateCompletedTodosCounter: function(){
-			this.view.completedTodoCounter.innerHTML = this.presenter.get("completedTodos").length;
+			this.view.completedTodoCounter.innerHTML = this._presenter.get("completedTodos").length;
 		},
 	});
 });
