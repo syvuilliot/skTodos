@@ -7,10 +7,10 @@ define([
     'dojo/store/Observable',
     "SkFramework/utils/binding",
     "dojo/on",
-    '../todo/TodoEditor',
+    '../todo/TodoEditor',	'../list/List',
     '../remover/Remover',
     '../fixtures/todos',
-	"skTodos/model/domain/Todo",
+	"../model/domain/Todo",
 	"dijit/form/Form",	"dijit/form/Button",	"dijit/form/TextBox",
 
 ], function(
@@ -21,13 +21,12 @@ define([
 	Memory, Observable,
 	binding,
 	on,
-	TodoEditor,
+	TodoEditor,				List,
 	Remover,
     todosFixtures,
     Todo,
     Form,				Button,					TextBox
 ) {
-
 	var Presenter = declare([Stateful, Destroyable], {
 		_todosSetter: function(value){
 			//create an observable collection of Todo instances
@@ -66,8 +65,6 @@ define([
 		}
 	});
 
-	var ListContainer = declare([Widget, Container], {
-	});
 /*	var RemovableTodo = declare([Widget, Templated, WidgetsInTemplate], {
 		templateString: '<div>'+
 				'<span data-dojo-attach-point="todoEditorNode"></span>'+
@@ -82,8 +79,6 @@ define([
 		templateString: template,
 		buildRendering: function(){
 			this.inherited(arguments);
-			// this.activeTodosContainer = new ListContainer({}, this.activeTodosNode);
-			this.completedTodosContainer = new ListContainer({}, this.completedTodosNode);
 			
 			this.addTodoForm = new Form({ 'class':'new-todo' }, this.newTodoNode);
 			this.addTodoLabel = new TextBox({
@@ -122,8 +117,6 @@ define([
 		},
 		startup: function(){
 			this.inherited(arguments);
-			// this.activeTodosContainer.startup();
-			this.completedTodosContainer.startup();
 		},
 	});
 
@@ -139,9 +132,16 @@ define([
 			this.presenter = new Presenter();
 			this.view = new View();
 			this.view.startup();
-			this.bind();
+			
+			this.completedTodosCmp = new List({
+				componentClass: TodoEditor
+			});
+			this.completedTodosCmp.view.placeAt(this.view.completedTodosNode, 'replace');
+			
 			//load data
 			this.set("todos", todosFixtures);
+			
+			this.bind();
 		},
 		destroy: function(){
 			this.inherited(arguments);
@@ -163,11 +163,6 @@ define([
 					addMethod: "addActiveTodo",
 					removeMethod: "removeActiveTodo",
 				}),
-				new binding.ObservableQueryResult(this.presenter, this, {
-					sourceProp: "completedTodos",
-					addMethod: "addCompletedTodo",
-					removeMethod: "removeCompletedTodo",
-				}),
 				new binding.ValueSync(this.presenter, this.view.addTodoLabel, {
 					sourceProp: "newTodoLabel",
 					targetProp: "value",
@@ -184,10 +179,9 @@ define([
 					addMethod: "updateActiveTodosCounter",
 					removeMethod: "updateActiveTodosCounter",
 				}),
-				new binding.ObservableQueryResult(this.presenter, this, {
+				new binding.Value(this.presenter, this.completedTodosCmp, {
 					sourceProp: "completedTodos",
-					addMethod: "updateCompletedTodosCounter",
-					removeMethod: "updateCompletedTodosCounter",
+					targetProp: "value"
 				})
 			);
 		},
@@ -197,12 +191,6 @@ define([
 			var todoView = this.view.addActiveTodo(id); //this is not really the view but only references to necessary sub components
 			// 2) bind it to presenter
 			this.activeTodoComponentsHandlers[id] = [
-				//just to see how it could look like
-	/*			new binding.Click(todoView.removeButton, this.presenter, {
-					method: "removeTodo",
-					arguments: [todo],
-				}),
-	*/
 				on(todoView.removeButton, "click", function(ev){
 					this.presenter.removeTodo(todo);
 				}.bind(this)),
@@ -216,7 +204,7 @@ define([
 				})
 			];
 			//we don't have to observe the value (Todo instance) corresponding to id, since we will remove the component (and never change it's todo value) 
-			todoView.todoEditor.set("todo", todo);
+			todoView.todoEditor.set("value", todo);
 		},
 		removeActiveTodo: function(todo, id){
 			this.activeTodoComponentsHandlers[id].forEach(function(handler){
@@ -229,7 +217,8 @@ define([
 			this.view.activeTodoCounter.innerHTML = this.presenter.get("activeTodos").length;
 		},
 		addCompletedTodo: function(todo, id){
-			var todoComp = new TodoEditor({todo: todo});
+			var todoComp = new TodoEditor();//{todo: todo});
+			todoComp.set('todo', todo);
 			this.completedTodoComponents[id] = todoComp;
 			this.view.completedTodosContainer.addChild(todoComp.view);
 		},

@@ -2,6 +2,7 @@ define([
 	"dojo/_base/declare",	"dojo/_base/lang",	'dojo/Stateful',
 	'dijit/Destroyable',	"dijit/_WidgetBase",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin",
 	"dojo/text!./template.html",
+	"SkFramework/component/Component",	'SkFramework/component/Presenter',
 	"SkFramework/utils/binding",	"SkFramework/utils/statefulSync",
 	"skTodos/model/domain/Todo",
 
@@ -12,12 +13,13 @@ define([
 	declare,				lang,				Stateful,
 	Destroyable,			Widget,					Templated,					WidgetsInTemplate,
 	template,
+	Component,							Presenter,
 	binding,						statefulSync,
 	Todo
 ){
-	var Presenter = declare([Stateful, Destroyable], {
+	var TodoPresenter = declare([Presenter], {
 		constructor: function(params){
-			this.todo = null;
+			this.value = null;
 			this.disabled = null;
 			this.todoStatefulSyncHandler = {
 				remove: function(){},
@@ -27,18 +29,15 @@ define([
 			return this.disabled || false;
 		},
 
-		_todoSetter: function(value){
-			var todo;
+		_valueSetter: function(value){
 			this.todoStatefulSyncHandler.remove();
-			if(value instanceof Todo){
-				todo = value;
-			} else {
-				todo = new Todo(value);
+			if (!(value instanceof Todo)){
+				value = new Todo(value);
 			}
 			//store the value
-			this.todo = todo;
-			//explose it
-			this.todoStatefulSyncHandler = statefulSync(this.todo, this, {
+			this.value = value;
+			//explode it
+			this.todoStatefulSyncHandler = statefulSync(this.value, this, {
 				label: "label",
 				checked: "checked",
 				dueDate: "dueDate",
@@ -71,49 +70,36 @@ define([
 		}
 	});
 
-	return declare([Stateful, Destroyable], {
+	return declare([Component], {
 		constructor: function(params){
 			this.disabled = false;
-			this.presenter = new Presenter();
+			this._presenter = new TodoPresenter();
 			this.view = new View();
 			this.view.startup();
-			this.bind();
 		},
-		destroy: function(){
-			this.inherited(arguments);
-			this.view.destroy();
-		},
-
-		get: function() {
-			return this.presenter.get.apply(this.presenter, arguments);
-		},
-
-		set: function() {
-			return this.presenter.set.apply(this.presenter, arguments);
-		},
-
+		
 		bind: function() {
 			this.own(
-				new binding.Multi(this.presenter, this.view.labelWidget, [
+				new binding.Multi(this._presenter, this.view.labelWidget, [
 					{type: "Value", sourceProp: "checked", targetProp: "disabled"},
 					{type: "ValueSync", sourceProp: "label", targetProp: "value"},
 					{type: "Value", sourceProp: "disabled", targetProp: "disabled"}
 				]),
-				new binding.Multi(this.presenter, this.view.checkWidget, [
+				new binding.Multi(this._presenter, this.view.checkWidget, [
 					{type: "ValueSync", sourceProp: "checked", targetProp: "checked"},
 					{type: "Value", sourceProp: "disabled", targetProp: "disabled"}
 				]),
-				new binding.Multi(this.presenter, this.view.dueDateWidget, [
+				new binding.Multi(this._presenter, this.view.dueDateWidget, [
 					{type: "ValueSync", sourceProp: "dueDate", targetProp: "date"},
 					{type: "Value", sourceProp: "disabled", targetProp: "disabled"}
 				]),
-				new binding.Click(this.view.dueDateButton, this.presenter, {
+				new binding.Click(this.view.dueDateButton, this._presenter, {
 					method: "setDueDateToToday"
 				}),
-				new binding.Display(this.presenter, this.view.dueDateWidget, {
+				new binding.Display(this._presenter, this.view.dueDateWidget, {
 					sourceProp: "dueDate"
 				}),
-				new binding.Display(this.presenter, this.view.dueDateButton, {
+				new binding.Display(this._presenter, this.view.dueDateButton, {
 					sourceProp: "dueDate", not: true
 				})
 			);
