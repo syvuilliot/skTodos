@@ -36,8 +36,10 @@ define([
 		},
 		
 		_addItem: function(item, id) {
-			var cmp = new this.componentClass();
-			cmp.set('value', item);
+			var cmp = new this.componentClass({
+				value: item
+			});
+			//cmp.set('value', item);
 			this._addCmp(cmp, id);
 		},
 		

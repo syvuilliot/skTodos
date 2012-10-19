@@ -61,6 +61,13 @@ define([
 					checkWidgetSetMethod.apply(this, arguments);
 				}
 			};
+			//hack to prevent labelWidget to call set when it is destroyed
+			var labelWidgetSetMethod = this.labelWidget.set;
+			this.labelWidget.set = function(){
+				if (!this._destroyed) {
+					labelWidgetSetMethod.apply(this, arguments);
+				}
+			};
 		},
 
 		set: function() {
