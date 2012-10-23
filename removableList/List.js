@@ -26,9 +26,9 @@ define([
 		
 		_addCmp: function(cmp, id) {
 			var removableCmp = new Removable({
-				component: cmp
+				content: cmp
 			});
-			removableCmp.view.addChild(cmp.view);
+			// removableCmp.view.addChild(cmp.view);
 			removableCmp.on('remove', function() {
 				this._presenter.remove(cmp.get('value'));
 			}.bind(this));

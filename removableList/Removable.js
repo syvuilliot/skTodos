@@ -2,12 +2,12 @@ define([
 	'dojo/_base/declare',
 	'dijit/_WidgetBase',	'dijit/_Container',	'dijit/_TemplatedMixin',
 	'dijit/form/Button',
-	'SkFramework/component/Component',	'SkFramework/component/Presenter',	'SkFramework/utils/binding',
+	'SkFramework/component/Component',	'SkFramework/component/_Container',	'SkFramework/component/Presenter',	'SkFramework/utils/binding',
 ], function(
 	declare,
-	Widget,					Container,			Templated,
+	Widget,					DjContainer,		Templated,
 	Button,
-	Component,							Presenter,							binding
+	Component,							_Container,							Presenter,							binding
 ) {
 	var RemovablePresenter = declare([Presenter], {
 		remove: function() {
@@ -15,7 +15,7 @@ define([
 		}
 	});
 	
-	var RemovableView = declare([Widget, Templated, Container], {
+	var RemovableView = declare([Widget, Templated, DjContainer], {
 		templateString: '<div><div data-dojo-attach-point="containerNode"></div><div data-dojo-attach-point="removeBtnNode"></div></div>',
 		
 		postCreate: function() {
@@ -26,16 +26,15 @@ define([
 		}
 	});
 	
-	return declare([Component], {
-		component: null,
-		
+	return declare([Component, _Container], {
 		constructor: function() {
 			this._presenter = new RemovablePresenter();
 			this.view = new RemovableView();
 		},
 		
-		_componentSetter: function(component) {
-			this.view.addChild(component.view);
+		_contentSetter: function(content) {
+			this.inherited(arguments);
+			this.view.addChild(content.view);
 		},
 		
 		bind: function() {
