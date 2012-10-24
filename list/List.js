@@ -1,13 +1,11 @@
 define([
 	"dojo/_base/declare",
 	"dijit/_WidgetBase",	"dijit/_TemplatedMixin",	"dijit/_Container",
-	"dojo/text!./template.html",
 	'SkFramework/component/Component',	'SkFramework/component/_Dom','SkFramework/component/Presenter',
 	'SkFramework/utils/binding'
 ], function(
 	declare,
 	Widget,					Templated,					Container,
-	template,
 	Component,			_Dom,				Presenter,
 	binding
 ) {

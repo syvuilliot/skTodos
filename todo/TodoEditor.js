@@ -1,7 +1,6 @@
 define([
 	"dojo/_base/declare",	"dojo/_base/lang",	'dojo/Stateful',
 	'dijit/Destroyable',	"dijit/_WidgetBase",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin",
-	"dojo/text!./template.html",
 	"SkFramework/component/Component",	'SkFramework/component/_Dom', 'SkFramework/component/Presenter',
 	"SkFramework/utils/binding",	"SkFramework/utils/statefulSync",
 	"skTodos/model/domain/Todo",
@@ -12,7 +11,6 @@ define([
 ], function(
 	declare,				lang,				Stateful,
 	Destroyable,			Widget,					Templated,					WidgetsInTemplate,
-	template,
 	Component,	_Dom,						Presenter,
 	binding,						statefulSync,
 	Todo,
@@ -50,34 +48,6 @@ define([
 		setDueDateToToday: function(){
 			this.set("dueDate", new Date());
 		},
-	});
-
-	var View = declare([Widget, Templated, WidgetsInTemplate], {
-		templateString: template,
-
-		postCreate: function(){
-			this.inherited(arguments);
-			//hack to prevent checkboxWidget to call set when it is destroyed
-			var checkWidgetSetMethod = this.checkWidget.set;
-			this.checkWidget.set = function(){
-				if (!this._destroyed) {
-					checkWidgetSetMethod.apply(this, arguments);
-				}
-			};
-			//hack to prevent labelWidget to call set when it is destroyed
-			var labelWidgetSetMethod = this.labelWidget.set;
-			this.labelWidget.set = function(){
-				if (!this._destroyed) {
-					labelWidgetSetMethod.apply(this, arguments);
-				}
-			};
-		},
-
-		set: function() {
-			if (!this._destroyed) {
-				this.inherited(arguments);
-			}
-		}
 	});
 
 	return declare([Component, _Dom], {

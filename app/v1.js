@@ -131,11 +131,11 @@ define([
 					sourceProp: "completedTodos",
 					targetProp: "value"
 				}),
-/*				new binding.Event(this._components.activeTodos, this._presenter, {
+				new binding.Event(this._components.activeTodos, this._presenter, {
 					event: "remove",
 					method: "removeTodoHandler",
 				}),
-*/				new binding.ObservableQueryResult(this._presenter, this, {
+				new binding.ObservableQueryResult(this._presenter, this, {
 					sourceProp: "activeTodos",
 					addMethod: "updateActiveTodosCounter",
 					removeMethod: "updateActiveTodosCounter",
