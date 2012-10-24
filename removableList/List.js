@@ -3,13 +3,13 @@ define([
 	'dojo/dom-construct',
 	'SkFramework/component/Presenter',	'SkFramework/utils/binding',
 	'../list/List',
-	'./Removable'
+	'dijit/form/Button'
 ], function(
 	declare,
 	domConstruct,
 	Presenter,							binding,
 	List,
-	Removable
+	Button
 ) {
 	var RemovablePresenter = declare([Presenter], {
 		remove: function(item) {
@@ -38,7 +38,7 @@ define([
 			var cmp = new this.componentClass({
 				value: item
 			});
-			var removableCmp = new Removable();
+			var removableCmp = new Button({label: "Supprimer"});
 			//register components
 			this._addComponent(containerCmp, id+"container");
 			this._addComponent(cmp, id);
@@ -47,8 +47,8 @@ define([
 			this._append(containerCmp);
 			domConstruct.place(cmp.domNode, containerCmp);
 			domConstruct.place(removableCmp.domNode, containerCmp);
-			//create binding
-			removableCmp.own(removableCmp.on("remove", function(ev){
+			//create bindings
+			removableCmp.own(removableCmp.on("click", function(ev){
 				this._presenter.remove(item);
 			}.bind(this)));
 		},
