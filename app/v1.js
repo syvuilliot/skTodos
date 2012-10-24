@@ -2,7 +2,8 @@ define([
 	'dojo/_base/declare',	'dojo/dom-construct',
 	'dijit/_WidgetBase',	'dijit/_TemplatedMixin',	"dijit/_WidgetsInTemplateMixin",	"dijit/_Container",
 	'dojo/store/Memory',	'dojo/store/Observable',
-    'SkFramework/component/Component',	'SkFramework/component/Presenter',	'SkFramework/utils/binding',
+    'SkFramework/component/Component',	'SkFramework/component/Presenter',	'SkFramework/component/_Dom',
+    'SkFramework/utils/binding',
     '../todo/TodoEditor',	'../list/List',	'../removableList/List',
     '../fixtures/todos',
 	"../model/domain/Todo",
@@ -12,14 +13,15 @@ define([
 	declare,				domConstruct,
 	Widget,					Templated,					WidgetsInTemplate,					Container,
 	Memory,					Observable,
-	Component,							Presenter,							binding,
+	Component,							PresenterBase,		_Dom,		
+	binding,
 	TodoEditor,				List,			RemovableList,
     todosFixtures,
     Todo,
     Form,				Button,					TextBox,
     template
 ) {
-	var Presenter = declare([Presenter], {
+	var Presenter = declare([PresenterBase], {
 		_todosSetter: function(value){
 			//create an observable collection of Todo instances
 			//TODO: only do it when it is necessary otherwise use the value directly
@@ -60,81 +62,80 @@ define([
 		}
 	});
 
-	var View = declare([Widget, Templated, WidgetsInTemplate], {
-		constructor: function(){
-			this.activeTodoViews = {};
-		},
-		templateString: template,
-		buildRendering: function() {
-			this.inherited(arguments);
-			
-			this.addTodoForm = new Form({ 'class':'new-todo' }, this.newTodoNode);
-			this.addTodoLabel = new TextBox({
-				name: 'label',
-				placeHolder: "Add new task ..."
-			}).placeAt(this.addTodoForm);
-			new Button({
-				label: "+",
-				type: 'submit'
-			}).placeAt(this.addTodoForm);
-			this.addTodoForm.on('submit', function(ev) {
-				ev.preventDefault();
-			});
-		}
-	});
-
-
-	return declare([Component], {
-		constructor: function(params){
-			//init variables
-			this.activeTodoComponentsHandlers = {};
-			this.completedTodoComponents = {};
-
+	return declare([Component, _Dom], {
+		constructor: function(params) {
 			//create internal machinery
 			this._presenter = new Presenter();
-			this.view = new View();
-			this.view.startup();
-			
-			this.completedTodosCmp = new List({
-				componentClass: TodoEditor
+
+			//register components
+			this._addComponents({
+				addTodoForm: new Form({ 'class':'new-todo' }),
+				addTodoLabel: new TextBox({
+					name: 'label',
+					placeHolder: "Add new task ..."
+				}),
+				addButton: new Button({
+					label: "+",
+					type: 'submit'
+				}),
+				completedTodos: new List({componentClass: TodoEditor}),
+				activeTodos: new RemovableList({componentClass: TodoEditor}),
+				removeCompletedTodosButton: new Button({
+					'label': "Supprimer les tâches terminées"
+				}),
+				activeTodosTitle: domConstruct.create('h2', {innerHTML: "Taches en cours : "}), //make a plurialized component that take a numeric value and display a string according to its value (0, 1 or more)
+				activeTodoCounter: domConstruct.create('div'),
+				completedTodoCounter: domConstruct.create("div"),
 			});
-			this.completedTodosCmp.view.placeAt(this.view.completedTodosNode, 'replace');
 			
-			this.activeTodosCmp = new RemovableList({
-				componentClass: TodoEditor
+			this._components.addTodoForm.on('submit', function(ev) {
+				ev.preventDefault();
 			});
-			this.activeTodosCmp.view.placeAt(this.view.activeTodosNode, 'replace');
-			
+
 			//load data
 			this.set("todos", todosFixtures);
+
 		},
 
-		bind: function() {
+		_render: function() {
+			this.inherited(arguments);
+			this._components.addTodoLabel.placeAt(this._components.addTodoForm);
+			this._components.addButton.placeAt(this._components.addTodoForm);
+			this._append(this._components.addTodoForm);
+			this._append(this._components.activeTodos);
+			this._append(this._components.removeCompletedTodosButton);
+			this._append(this._components.completedTodos);
+			this._append(this._components.activeTodosTitle);
+			this._components.activeTodosTitle.appendChild(this._components.activeTodoCounter);
+			this._append(this._components.completedTodoCounter);
+		},
+
+		_bind: function() {
 			this.own(
-				new binding.ValueSync(this._presenter, this.view.addTodoLabel, {
+				new binding.ValueSync(this._presenter, this._components.addTodoLabel, {
 					sourceProp: "newTodoLabel",
 					targetProp: "value",
 				}),
-				new binding.Event(this.view.addTodoForm, this._presenter, {
+				new binding.Event(this._components.addTodoForm, this._presenter, {
 					event: "submit",
 					method: "createTodo",
 				}),
-				new binding.Click(this.view.removeCompletedTodosButton, this._presenter, {
+				new binding.Click(this._components.removeCompletedTodosButton, this._presenter, {
 					method: "removeCompletedTodos",
 				}),
-				new binding.Value(this._presenter, this.activeTodosCmp, {
+				new binding.Value(this._presenter, this._components.activeTodos, {
 					sourceProp: "activeTodos",
 					targetProp: "value"
 				}),
-				new binding.Value(this._presenter, this.completedTodosCmp, {
+				new binding.Value(this._presenter, this._components.completedTodos, {
 					sourceProp: "completedTodos",
 					targetProp: "value"
 				}),
-				new binding.Event(this.activeTodosCmp, this._presenter, {
+/*				new binding.Event(this._components.activeTodos, this._presenter, {
 					event: "remove",
 					method: "removeTodoHandler",
 				}),
-				new binding.ObservableQueryResult(this._presenter, this, {
+*/				new binding.ObservableQueryResult(this._presenter, this, {
 					sourceProp: "activeTodos",
 					addMethod: "updateActiveTodosCounter",
 					removeMethod: "updateActiveTodosCounter",
@@ -147,10 +148,10 @@ define([
 			);
 		},
 		updateActiveTodosCounter: function(){
-			this.view.activeTodoCounter.innerHTML = this._presenter.get("activeTodos").length;
+			this._components.activeTodoCounter.innerHTML = this._presenter.get("activeTodos").length;
 		},
 		updateCompletedTodosCounter: function(){
-			this.view.completedTodoCounter.innerHTML = this._presenter.get("completedTodos").length;
+			this._components.completedTodoCounter.innerHTML = this._presenter.get("completedTodos").length;
 		},
 	});
 });

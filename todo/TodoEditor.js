@@ -113,7 +113,7 @@ define([
 			});
 		},
 
-		render: function(){
+		_render: function(){
 			this.inherited(arguments);
 			//place components
 			this._append(this._components.checkWidget);
@@ -123,7 +123,7 @@ define([
 
 		},
 		
-		bind: function() {
+		_bind: function() {
 			this.own(
 				new binding.Multi(this._presenter, this._components.labelWidget, [
 					{type: "Value", sourceProp: "checked", targetProp: "disabled"},

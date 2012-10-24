@@ -2,12 +2,12 @@ define([
 	'dojo/_base/declare',
 	'dijit/_WidgetBase',	'dijit/_Container',	'dijit/_TemplatedMixin',
 	'dijit/form/Button',
-	'SkFramework/component/Component',	'SkFramework/component/_Container',	'SkFramework/component/Presenter',	'SkFramework/utils/binding',
+	'SkFramework/component/Component',	'SkFramework/component/_Dom',	'SkFramework/component/Presenter',	'SkFramework/utils/binding',
 ], function(
 	declare,
 	Widget,					DjContainer,		Templated,
 	Button,
-	Component,							_Container,							Presenter,							binding
+	Component,							_Dom,							Presenter,							binding
 ) {
 	var RemovablePresenter = declare([Presenter], {
 		remove: function() {
@@ -26,31 +26,27 @@ define([
 		}
 	});
 	
-	return declare([Component, _Container], {
+	return declare([Component, _Dom], {
 		constructor: function() {
 			this._presenter = new RemovablePresenter();
-			this.view = new RemovableView();
+			this.own(
+				new binding.Event(this._presenter, this, {
+					event: 'remove',
+					method: '_remove'
+				})
+			);
 		},
-		
-		_contentSetter: function(content) {
-			this.inherited(arguments);
-			this.view.addChild(content.view);
-		},
-		
+				
 		bind: function() {
 			this.own(
 				new binding.Event(this.view.removeBtn, this._presenter, {
 					event: 'click',
 					method: 'remove'
-				}),
-				new binding.Event(this._presenter, this, {
-					event: 'remove',
-					method: 'remove'
 				})
 			);
 		},
 		
-		remove: function() {
+		_remove: function() {
 			this.emit('remove');
 		}
 	});
