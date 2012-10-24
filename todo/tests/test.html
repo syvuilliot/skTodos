@@ -28,33 +28,33 @@
 			window.externalModel = new Todo({label: "Faire les courses"});
 
 			var todoEditor = window.todoEditor = new TodoEditor({
-                todo: externalModel,
+                value: externalModel,
             });
-            todoEditor.view.placeAt("todoEditor");
+            todoEditor.placeAt("todoEditor");
 
             var todoEditor2 = window.todoEditor2 = new TodoEditor({
-                todo: externalModel,
+                value: externalModel,
             });
-            todoEditor2.view.placeAt("todoEditor2");
+            todoEditor2.placeAt("todoEditor2");
 
-            console.assert(externalModel===todoEditor.get("todo") , "If we set a Todo instance on todoEditor, it does not create a new one");
+            console.assert(externalModel===todoEditor.get("value") , "If we set a Todo instance on todoEditor, it does not create a new one");
 
-            console.assert(todoEditor.get("label") === todoEditor.view.labelWidget.get("value"), "The internal model has the same label than the label widget");
+            console.assert(todoEditor.get("label") === todoEditor._components.labelWidget.get("value"), "The internal model has the same label than the label widget");
             //trying to change label on todo model
-            todoEditor.get("todo").set("label", "test");
+            todoEditor.get("value").set("label", "test");
             console.assert(todoEditor.get("label") === "test");
-            console.assert(todoEditor.view.labelWidget.get("value") === "test");
+            console.assert(todoEditor._components.labelWidget.get("value") === "test");
 
             //trying to change label on todoEditor
             todoEditor.set("label", "truc");
-            console.assert(todoEditor.get("todo").get("label") === "truc");
-            console.assert(todoEditor.view.labelWidget.get("value") === "truc");
+            console.assert(todoEditor.get("value").get("label") === "truc");
+            console.assert(todoEditor._components.labelWidget.get("value") === "truc");
 
             console.assert(todoEditor.get("checked") === false, "The internal model 'checked' property is false by default");
 
             todoEditor.set("checked", true);
-            console.assert(todoEditor.view.checkWidget.get("checked") === true, "When updating the internal model, the view is updated");
-            console.assert(todoEditor.view.labelWidget.get("disabled") === true, "When updating the internal model, the view is updated");
+            console.assert(todoEditor._components.checkWidget.get("checked") === true, "When updating the internal model, the component is updated");
+            console.assert(todoEditor._components.labelWidget.get("disabled") === true, "When updating the internal model, the component is updated");
             try {
                 todoEditor.set("label", "Faire la lessive");
             }
@@ -62,8 +62,8 @@
                 console.assert(err, "We cannot change the label of an already compelted task");
             }
 
-            todoEditor.view.checkWidget.set("checked", false);
-            console.assert(todoEditor.get("checked") === false, "When updating the view, the internal model is updated");
+            todoEditor._components.checkWidget.set("checked", false);
+            console.assert(todoEditor.get("checked") === false, "When updating the component, the internal model is updated");
 
             //TODO: test setting "disabled" to true then to false and see if checkWidget value is aletered
 
