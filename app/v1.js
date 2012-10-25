@@ -1,8 +1,8 @@
 define([
 	'dojo/_base/declare',	'dojo/dom-construct',
-	'dijit/_WidgetBase',	'dijit/_TemplatedMixin',	"dijit/_WidgetsInTemplateMixin",	"dijit/_Container",
 	'dojo/store/Memory',	'dojo/store/Observable',
-    'SkFramework/component/DomComponent',	'SkFramework/component/Presenter',	'SkFramework/component/_WithDomNode',	'SkFramework/component/_WithDijit',
+    'SkFramework/component/DomComponent',	'SkFramework/component/_WithDomNode',	'SkFramework/component/_WithDijit', 'SkFramework/component/_Container',
+    'SkFramework/component/Presenter',
     'SkFramework/utils/binding',
     '../todo/TodoEditor',	'../list/List',	'../removableList/List',
     '../fixtures/todos',
@@ -11,9 +11,9 @@ define([
 	'dojo/text!./v1.html'
 ], function(
 	declare,				domConstruct,
-	Widget,					Templated,					WidgetsInTemplate,					Container,
 	Memory,					Observable,
-	DomComponent,							PresenterBase,						_WithDom,								_WithDijit,
+	DomComponent,							_WithDom,								_WithDijit, _Container,
+	PresenterBase,
 	binding,
 	TodoEditor,				List,			RemovableList,
     todosFixtures,
@@ -62,6 +62,8 @@ define([
 		}
 	});
 
+	var ContainerComponent = declare([DomComponent, _Container]);
+
 	return declare([DomComponent, _WithDom, _WithDijit], {
 		domAttrs: {
 			'class': "todo-app"
@@ -72,9 +74,10 @@ define([
 
 			//register components
 			this._addComponents({
-				todoListsContainer: domConstruct.create('div', {class: "todo-lists"}),
-				activeTodosSection: domConstruct.create("section", {class: "todo-list"}),
-				completedTodosSection: domConstruct.create("section", {class: "todo-list"}),
+				todoListsContainer: new ContainerComponent({domAttrs:{class: "todo-lists"}}),
+				//old: activeTodosSection: domConstruct.create("section", {class: "todo-list"}),
+				activeTodosSection: new ContainerComponent({domTag:"section", domAttrs:{class: "todo-list"}}),
+				completedTodosSection: new ContainerComponent({domTag:"section", domAttrs:{class: "todo-list"}}),
 				addTodoForm: new Form({ 'class':'new-todo' }),
 				addTodoLabel: new TextBox({
 					name: 'label',
@@ -105,23 +108,25 @@ define([
 		_render: function() {
 			this.inherited(arguments);
 			var $ = this._components;
-			var place = domConstruct.place;
 
 			//addTodo form
 			$.addTodoLabel.placeAt($.addTodoForm);
 			$.addButton.placeAt($.addTodoForm);
 			this._append($.addTodoForm);
 			//todos lists
-			this._append($.todoListsContainer);
+			this._append($.todoListsContainer.addChildren([
 				//active todos
-				place($.activeTodosSection, $.todoListsContainer);
-				place($.activeTodoTitle, $.activeTodosSection);
-				place($.activeTodos.domNode, $.activeTodosSection);
+				$.activeTodosSection.addChildren([
+					$.activeTodoTitle,
+					$.activeTodos
+				]),
 				//completed todos
-				place($.completedTodosSection, $.todoListsContainer);
-				place($.completedTodoTitle, $.completedTodosSection);
-				place($.removeCompletedTodosButton.domNode, $.completedTodosSection);
-				place($.completedTodos.domNode, $.completedTodosSection);
+				$.completedTodosSection.addChildren([
+					$.completedTodoTitle,
+					$.removeCompletedTodosButton,
+					$.completedTodos,
+				]),
+			]));
 		},
 
 		_bind: function() {
