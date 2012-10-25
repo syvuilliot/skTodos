@@ -28,6 +28,7 @@ define([
 		},
 		
 		_addItem: function(item, id) {
+			//create
 			var cmp = new this.componentClass({
 				value: item
 			});
@@ -39,8 +40,12 @@ define([
 				
 		_removeItem: function(item, id){
 			var cmp = this._getComponent(id);
-			cmp.destroy();
+			//unplace it (remove its view)
+			this._remove(cmp);
+			//unregister it
 			this._removeComponent(id);
+			//uncreate it
+			cmp.destroy();
 		},
 		
 	});

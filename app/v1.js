@@ -72,7 +72,7 @@ define([
 
 			//register components
 			this._addComponents({
-				todoListsContainer: domConstruct.create('h2', {class: "todo-lists"}),
+				todoListsContainer: domConstruct.create('div', {class: "todo-lists"}),
 				activeTodosSection: domConstruct.create("section", {class: "todo-list"}),
 				completedTodosSection: domConstruct.create("section", {class: "todo-list"}),
 				addTodoForm: new Form({ 'class':'new-todo' }),

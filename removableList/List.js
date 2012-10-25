@@ -57,12 +57,17 @@ define([
 			var containerCmp = this._getComponent(id+"container");
 			var cmp = this._getComponent(id);
 			var removableCmp = this._getComponent(id+"remover");
-			cmp.destroy();
-			removableCmp.destroy();
-			domConstruct.destroy(containerCmp);
+			//unplace
+			// I think that unplacing only the container from this is sufficient
+			this._remove(containerCmp);
+			//unregister
 			this._removeComponent(id+"container");
 			this._removeComponent(id);
 			this._removeComponent(id+"remover");
+			//kill
+			cmp.destroy();
+			removableCmp.destroy();
+			//containerCmp has no destroy method;
 		},
 	});
 });
