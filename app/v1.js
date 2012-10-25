@@ -63,12 +63,18 @@ define([
 	});
 
 	return declare([Component, _Dom], {
+		domNodeAttrs: {
+			class: "todo-app"
+		},
 		constructor: function(params) {
 			//create internal machinery
 			this._presenter = new Presenter();
 
 			//register components
 			this._addComponents({
+				todoListsContainer: domConstruct.create('h2', {class: "todo-lists"}),
+				activeTodosSection: domConstruct.create("section", {class: "todo-list"}),
+				completedTodosSection: domConstruct.create("section", {class: "todo-list"}),
 				addTodoForm: new Form({ 'class':'new-todo' }),
 				addTodoLabel: new TextBox({
 					name: 'label',
@@ -83,9 +89,8 @@ define([
 				removeCompletedTodosButton: new Button({
 					'label': "Supprimer les tâches terminées"
 				}),
-				activeTodosTitle: domConstruct.create('h2', {innerHTML: "Taches en cours : "}), //make a plurialized component that take a numeric value and display a string according to its value (0, 1 or more)
-				activeTodoCounter: domConstruct.create('div'),
-				completedTodoCounter: domConstruct.create("div"),
+				activeTodoTitle: domConstruct.create('h2'),
+				completedTodoTitle: domConstruct.create("h2"),
 			});
 			
 			this._components.addTodoForm.on('submit', function(ev) {
@@ -99,15 +104,24 @@ define([
 
 		_render: function() {
 			this.inherited(arguments);
-			this._components.addTodoLabel.placeAt(this._components.addTodoForm);
-			this._components.addButton.placeAt(this._components.addTodoForm);
-			this._append(this._components.addTodoForm);
-			this._append(this._components.activeTodos);
-			this._append(this._components.removeCompletedTodosButton);
-			this._append(this._components.completedTodos);
-			this._append(this._components.activeTodosTitle);
-			this._components.activeTodosTitle.appendChild(this._components.activeTodoCounter);
-			this._append(this._components.completedTodoCounter);
+			var $ = this._components;
+			var place = domConstruct.place;
+
+			//addTodo form
+			$.addTodoLabel.placeAt($.addTodoForm);
+			$.addButton.placeAt($.addTodoForm);
+			this._append($.addTodoForm);
+			//todos lists
+			this._append($.todoListsContainer);
+				//active todos
+				place($.activeTodosSection, $.todoListsContainer);
+				place($.activeTodoTitle, $.activeTodosSection);
+				place($.activeTodos.domNode, $.activeTodosSection);
+				//completed todos
+				place($.completedTodosSection, $.todoListsContainer);
+				place($.completedTodoTitle, $.completedTodosSection);
+				place($.removeCompletedTodosButton.domNode, $.completedTodosSection);
+				place($.completedTodos.domNode, $.completedTodosSection);
 		},
 
 		_bind: function() {
@@ -147,11 +161,12 @@ define([
 				})
 			);
 		},
+		//TODO: create plurialized component
 		updateActiveTodosCounter: function(){
-			this._components.activeTodoCounter.innerHTML = this._presenter.get("activeTodos").length;
+			this._components.activeTodoTitle.innerHTML = "Tâches en cours (" + this._presenter.get("activeTodos").length + ")";
 		},
 		updateCompletedTodosCounter: function(){
-			this._components.completedTodoCounter.innerHTML = this._presenter.get("completedTodos").length;
+			this._components.completedTodoTitle.innerHTML = "Tâches terminées (" + this._presenter.get("completedTodos").length + ")";
 		},
 	});
 });
