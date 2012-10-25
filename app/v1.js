@@ -2,7 +2,7 @@ define([
 	'dojo/_base/declare',	'dojo/dom-construct',
 	'dijit/_WidgetBase',	'dijit/_TemplatedMixin',	"dijit/_WidgetsInTemplateMixin",	"dijit/_Container",
 	'dojo/store/Memory',	'dojo/store/Observable',
-    'SkFramework/component/Component',	'SkFramework/component/Presenter',	'SkFramework/component/_Dom',
+    'SkFramework/component/DomComponent',	'SkFramework/component/Presenter',	'SkFramework/component/_WithDomNode',	'SkFramework/component/_WithDijit',
     'SkFramework/utils/binding',
     '../todo/TodoEditor',	'../list/List',	'../removableList/List',
     '../fixtures/todos',
@@ -13,7 +13,7 @@ define([
 	declare,				domConstruct,
 	Widget,					Templated,					WidgetsInTemplate,					Container,
 	Memory,					Observable,
-	Component,							PresenterBase,		_Dom,		
+	DomComponent,							PresenterBase,						_WithDom,								_WithDijit,
 	binding,
 	TodoEditor,				List,			RemovableList,
     todosFixtures,
@@ -62,9 +62,9 @@ define([
 		}
 	});
 
-	return declare([Component, _Dom], {
-		domNodeAttrs: {
-			class: "todo-app"
+	return declare([DomComponent, _WithDom, _WithDijit], {
+		domAttrs: {
+			'class': "todo-app"
 		},
 		constructor: function(params) {
 			//create internal machinery

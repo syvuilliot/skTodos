@@ -1,18 +1,18 @@
 define([
 	"dojo/_base/declare",
 	"dijit/_WidgetBase",	"dijit/_TemplatedMixin",	"dijit/_Container",
-	'SkFramework/component/Component',	'SkFramework/component/_Dom','SkFramework/component/Presenter',
+	'SkFramework/component/DomComponent',	'SkFramework/component/_WithDomNode','SkFramework/component/Presenter',
 	'SkFramework/utils/binding'
 ], function(
 	declare,
 	Widget,					Templated,					Container,
-	Component,			_Dom,				Presenter,
+	DomComponent,			_Dom,				Presenter,
 	binding
 ) {
 	var ListPresenter = declare([Presenter], {
 	});
 
-	return declare([Component, _Dom], {
+	return declare([DomComponent, _Dom], {
 		componentClass: null,
 		
 		constructor: function() {

@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare",	"dojo/_base/lang",	'dojo/Stateful',
 	'dijit/Destroyable',	"dijit/_WidgetBase",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin",
-	"SkFramework/component/Component",	'SkFramework/component/_Dom', 'SkFramework/component/Presenter',
+	"SkFramework/component/DomComponent",	'SkFramework/component/_WithDijit', 'SkFramework/component/Presenter',
 	"SkFramework/utils/binding",	"SkFramework/utils/statefulSync",
 	"skTodos/model/domain/Todo",
 
@@ -11,7 +11,7 @@ define([
 ], function(
 	declare,				lang,				Stateful,
 	Destroyable,			Widget,					Templated,					WidgetsInTemplate,
-	Component,	_Dom,						Presenter,
+	DomComponent,						_WithDijit,						Presenter,
 	binding,						statefulSync,
 	Todo,
 	TextBox, CheckBox, Button,
@@ -50,10 +50,9 @@ define([
 		},
 	});
 
-	return declare([Component, _Dom], {
-		tag: "div",
-		domNodeAttrs: {
-			class: "todo"
+	return declare([DomComponent,_WithDijit], {
+		domAttrs: {
+			'class': "todo"
 		},
 
 		constructor: function(params){
@@ -70,6 +69,7 @@ define([
 					}
 				}),
 				labelWidget: new TextBox({
+					'class': 'label',
 					//hack to prevent widget to call set when it is destroyed
 					set: function(){
 						if (!this._destroyed) {
