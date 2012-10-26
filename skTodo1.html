@@ -20,7 +20,6 @@
   </head>
 
 <body class="sk">
-	<div id="app"></div>
     <script data-dojo-config="async: true"
             src="../dojo/dojo.js"></script>
     <script>
@@ -30,7 +29,7 @@
             App
         ) {
             window.app = new App();
-            app.placeAt("app");
+            document.body.appendChild(app.domNode);
         });
 	</script>
 </body>

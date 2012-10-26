@@ -62,7 +62,7 @@ define([
 		}
 	});
 
-	var ContainerComponent = declare([DomComponent, _Container]);
+	var ContainerComponent = declare([DomComponent, _WithDom, _WithDijit, _Container]);
 
 	return declare([DomComponent, _WithDom, _WithDijit], {
 		domAttrs: {
