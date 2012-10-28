@@ -3,9 +3,7 @@ define([
 	'dijit/Destroyable',	"dijit/_WidgetBase",	"dijit/_TemplatedMixin",	"dijit/_WidgetsInTemplateMixin",
 	"SkFramework/component/DomComponent",	'SkFramework/component/_WithDijit', 'SkFramework/component/Presenter',
 	"SkFramework/utils/binding",	"SkFramework/utils/statefulSync",
-	"skTodos/model/domain/Todo",
-
-	
+	"skTodos/model/Todo",
 	"dijit/form/TextBox",	"dijit/form/CheckBox", "dijit/form/Button",
 	"skTodos/dueDatePicker/DueDatePicker",
 ], function(
@@ -51,9 +49,6 @@ define([
 	});
 
 	return declare([DomComponent,_WithDijit], {
-		domAttrs: {
-			'class': "todo"
-		},
 
 		constructor: function(params){
 			this.disabled = false;

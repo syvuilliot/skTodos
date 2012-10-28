@@ -6,9 +6,8 @@ define([
     'SkFramework/utils/binding',
     '../todo/TodoEditor',	'../list/List',	'../removableList/List',
     '../fixtures/todos',
-	"../model/domain/Todo",
+	"../model/Todo",
 	"dijit/form/Form",	"dijit/form/Button",	"dijit/form/TextBox",
-	'dojo/text!./v1.html'
 ], function(
 	declare,				domConstruct,
 	Memory,					Observable,
@@ -18,14 +17,13 @@ define([
 	TodoEditor,				List,			RemovableList,
     todosFixtures,
     Todo,
-    Form,				Button,					TextBox,
-    template
+    Form,				Button,					TextBox
 ) {
 	var Presenter = declare([PresenterBase], {
 		_todosSetter: function(value){
 			//create an observable collection of Todo instances
 			//TODO: only do it when it is necessary otherwise use the value directly
-			var todosStore = this.todosStore = Observable(new Memory());
+			var todosStore = this.todosStore = Todo;
 			if (value && value.forEach){
 				value.forEach(function(value){
 					this.addTodo(value);

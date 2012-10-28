@@ -11,8 +11,6 @@
   </head>
 
 <body class="claro">
-	<div id="todoEditor"></div>
-    <div id="todoEditor2"></div>
     <script data-dojo-config="async: false"
         src="../../../dojo/dojo.js">
     </script>
@@ -22,7 +20,7 @@
 			'dojo/Stateful',
 			'sktodos/todo/TodoEditor',
             "SkFramework/utils/statefulSync",
-            'skTodos/model/domain/Todo',
+            'skTodos/model/Todo',
 
 		], function(Stateful, TodoEditor, statefulSync, Todo){
 			window.externalModel = new Todo({label: "Faire les courses"});
@@ -30,12 +28,12 @@
 			var todoEditor = window.todoEditor = new TodoEditor({
                 value: externalModel,
             });
-            todoEditor.placeAt("todoEditor");
+            document.body.appendChild(todoEditor.domNode);
 
             var todoEditor2 = window.todoEditor2 = new TodoEditor({
                 value: externalModel,
             });
-            todoEditor2.placeAt("todoEditor2");
+            document.body.appendChild(todoEditor2.domNode);
 
             console.assert(externalModel===todoEditor.get("value") , "If we set a Todo instance on todoEditor, it does not create a new one");
 
