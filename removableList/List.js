@@ -34,8 +34,8 @@ define([
 		
 		_addItem: function(item, id) {
 			//create components
-			var containerCmp = domConstruct.create("div", this.componentDomAttrs);
-			var cmp = new this.componentClass({
+			var containerCmp = domConstruct.create("div", { 'class': 'removable item'});
+			var cmp = this._buildComponent(this.itemConfig, {
 				value: item,
 			});
 			var removableCmp = new Button({label: "Supprimer"});
@@ -44,7 +44,7 @@ define([
 			this._addComponent(cmp, id);
 			this._addComponent(removableCmp, id+"remover");
 			//place components
-			this._append(containerCmp);
+			this._placeComponent(containerCmp);
 			domConstruct.place(cmp.domNode, containerCmp);
 			domConstruct.place(removableCmp.domNode, containerCmp);
 			//create bindings
@@ -59,7 +59,7 @@ define([
 			var removableCmp = this._getComponent(id+"remover");
 			//unplace
 			// I think that unplacing only the container from this is sufficient
-			this._remove(containerCmp);
+			this._unplaceComponent(containerCmp);
 			//unregister
 			this._removeComponent(id+"container");
 			this._removeComponent(id);

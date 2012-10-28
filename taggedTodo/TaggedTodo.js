@@ -50,8 +50,8 @@ define([
 		_render: function(){
 			this.inherited(arguments);
 			//place components
-			this._append(this._components.todoEditor);
-			this._append(this._components.tagList);
+			this._placeComponent(this._components.todoEditor);
+			this._placeComponent(this._components.tagList);
 		},
 		_bind: function() {
 			this.own(

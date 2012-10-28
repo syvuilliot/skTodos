@@ -135,56 +135,69 @@ section {
     text-shadow: 1px 1px 0 white;
   }
   
-  .todo {
+  .item {
+    position: relative;
     margin-top: 1em;
     padding: 1em;
     background-color: #DDD;
     
-    .label {
-      .dijitTextBoxSubtle(#AAA);
-      font-size: 2em;
+    &.removable > .dijitButton {
+      position: absolute;
+      top: 5px;
+      right: 5px;
     }
-    
-    &.checked {
-      background-color: #E0E0E0;
-      .label input {
-        text-decoration: line-through;
-        color: #AAA;
-      }
+  }
+}
+
+.todo {
+  .label {
+    .dijitTextBoxSubtle(#AAA);
+    font-size: 2em;
+  }
+  
+  &.checked {
+    background-color: #E0E0E0;
+    .label input {
+      text-decoration: line-through;
+      color: #AAA;
     }
+  }
+  
+  .tag-list {
+    margin: 1ex;
+    display: inline-block;
     
-    .tag-list {
-      margin: 1ex;
-      display: inline-block;
+    .tag {
+      margin-right: 1ex;
       
-      .tag {
-        margin-right: 1ex;
+      > span {
+        display: inline-block;
+        font-size: 1.1em;
+        background-color: #AAA;
+        color: white;
+        &:first-child {
+          padding: 0.5ex 1ex;
+        }
+      }
+      .dijitButton {
+        .dijitButtonReset();
         
-        > span {
-          display: inline-block;
-          font-size: 1.1em;
-          background-color: #AAA;
-          color: white;
-          &:first-child {
-            padding: 0.5ex 1ex;
-          }
+        border-left: 1px solid #CCC;
+        color: #CCC;
+        .dijitButtonContents {
+          padding: 0.5ex;
         }
-        .dijitButton {
-          .dijitButtonReset();
-          
-          border-left: 1px solid #CCC;
-          color: #CCC;
-          .dijitButtonContents {
-            padding: 0.5ex;
-          }
-          &:hover {
-            background-color: #777;
-          }
+        &:hover {
+          background-color: #777;
         }
-        * {
-          vertical-align: baseline;
-        }
+      }
+      * {
+        vertical-align: baseline;
       }
     }
   }
+}
+
+.completed .todo {
+  opacity: 0.6;
 }

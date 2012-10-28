@@ -1,10 +1,10 @@
 define([
-	"dojo/_base/declare",
+	"dojo/_base/declare",	"dojo/dom-class",
 	"dijit/_WidgetBase",	"dijit/_TemplatedMixin",	"dijit/_Container",
 	'SkFramework/component/DomComponent',	'SkFramework/component/_WithDomNode','SkFramework/component/Presenter',
 	'SkFramework/utils/binding'
 ], function(
-	declare,
+	declare,				domClass,
 	Widget,					Templated,					Container,
 	DomComponent,			_Dom,				Presenter,
 	binding
@@ -13,8 +13,7 @@ define([
 	});
 
 	return declare([DomComponent, _Dom], {
-		componentClass: null,
-		componentDomAttrs: null,
+		itemConfig: null,
 		
 		constructor: function() {
 			this._presenter = new ListPresenter();
@@ -30,20 +29,20 @@ define([
 		
 		_addItem: function(item, id) {
 			//create
-			var cmp = new this.componentClass({
-				value: item,
-				domAttrs: this.componentDomAttrs
+			var cmp = this._buildComponent(this.itemConfig, {
+				value: item
 			});
 			//register component
 			this._addComponent(cmp, id);
 			//place it
-			this._append(cmp);
+			this._placeComponent(cmp);
+			domClass.add(cmp.domNode, 'item');
 		},
 				
 		_removeItem: function(item, id){
 			var cmp = this._getComponent(id);
 			//unplace it (remove its view)
-			this._remove(cmp);
+			this._unplaceComponent(cmp);
 			//unregister it
 			this._removeComponent(id);
 			//uncreate it

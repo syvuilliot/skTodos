@@ -1,0 +1,118 @@
+@import "mixins";
+
+// Grid system and page structure
+@import "../bootstrap/less/scaffolding.less";
+@import "../bootstrap/less/grid.less";
+@import "../bootstrap/less/layouts.less";
+@import "../bootstrap/less/responsive.less";
+
+@import "../../dijit/themes/dijit.css";
+@import "dijit/reset";
+@import "dijit/mixins";
+@import "dijit/form/Button";
+@import "dijit/form/Checkbox";
+@import "dijit/form/RadioButton";
+
+html {
+  height: 100%;
+}
+
+.todo-app {
+  .border-box;
+  .box;
+  .box-orient(vertical);
+  height: 100%;
+  width: 100%;
+	padding: 20px 50px;
+	line-height: normal;
+}
+
+.todo-lists {
+  .box;
+  .flex(1);
+}
+
+section {
+  padding: 2em;
+  border-radius: 4px;
+  margin: 1em;
+
+  h2 {
+    font-size: 2em;
+    margin-top: 0;
+    text-transform: uppercase;
+  }
+}
+  
+.new-todo {
+  .border-box;
+  .box;
+  margin-bottom: 15px;
+  width: 100%;
+  font-size: 2em;
+  background-color: #BBB;
+  box-shadow: 2px 1px 2px #CCC;
+  
+  .dijitTextBox {
+    .box;
+    .flex(1);
+    padding: 10px;
+    background: white;
+    border: 1px solid #CCC;
+    border-right: none;
+    
+    .dijitInputField {
+      .box;
+      .flex(1);
+      input {
+        .box;
+        .flex(1);
+      }
+    }
+  }
+  .dijitButton {
+    .box;
+    .dijitButtonNode {
+      .box;
+      padding: 8px 10px 10px;
+    }
+  }
+}
+
+.todo-list {
+  .flex(1);
+  background-color: #EEE;
+  
+  h2 {
+    color: #AAA;
+    text-shadow: 1px 1px 0 white;
+  }
+  
+  .item {
+    position: relative;
+    margin-top: 1em;
+    padding: 1em;
+    background-color: #DDD;
+    
+    &.removable > .dijitButton {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }
+  }
+}
+
+.todo {
+  .label {
+    .dijitTextBoxSubtle(#AAA);
+    font-size: 2em;
+  }
+  
+  &.checked {
+    background-color: #E0E0E0;
+    .label input {
+      text-decoration: line-through;
+      color: #AAA;
+    }
+  }
+}

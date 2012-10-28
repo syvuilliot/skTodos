@@ -85,8 +85,8 @@ define([
 					label: "+",
 					type: 'submit'
 				}),
-				completedTodos: new List({componentClass: TodoEditor}),
-				activeTodos: new RemovableList({componentClass: TodoEditor}),
+				completedTodos: new List({itemConfig: TodoEditor}),
+				activeTodos: new RemovableList({itemConfig: TodoEditor}),
 				removeCompletedTodosButton: new Button({
 					'label': "Supprimer les tâches terminées"
 				}),
@@ -110,9 +110,9 @@ define([
 			//addTodo form
 			$.addTodoLabel.placeAt($.addTodoForm);
 			$.addButton.placeAt($.addTodoForm);
-			this._append($.addTodoForm);
+			this._placeComponent($.addTodoForm);
 			//todos lists
-			this._append($.todoListsContainer.addChildren([
+			this._placeComponent($.todoListsContainer.addChildren([
 				//active todos
 				$.activeTodosSection.addChildren([
 					$.activeTodoTitle,

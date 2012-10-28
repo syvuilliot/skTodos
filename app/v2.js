@@ -88,7 +88,7 @@ define([
 				todoListsContainer: new ContainerComponent({domAttrs:{class: "todo-lists"}}),
 				//old: activeTodosSection: domConstruct.create("section", {class: "todo-list"}),
 				activeTodosSection: new ContainerComponent({domTag:"section", domAttrs:{class: "todo-list"}}),
-				completedTodosSection: new ContainerComponent({domTag:"section", domAttrs:{class: "todo-list"}}),
+				completedTodosSection: new ContainerComponent({domTag:"section", domAttrs:{class: "todo-list completed"}}),
 				addTodoForm: new Form({ 'class':'new-todo' }),
 				addTodoLabel: new TextBox({
 					name: 'label',
@@ -98,8 +98,8 @@ define([
 					label: "+",
 					type: 'submit'
 				}),
-				completedTodos: new List({componentClass: TodoEditor, componentDomAttrs: {'class': "todo"},}),
-				activeTodos: new RemovableList({componentClass: TaggedTodo, componentDomAttrs: {'class': "todo"},}),
+				completedTodos: new List({itemConfig: TodoEditor}),
+				activeTodos: new RemovableList({itemConfig: TaggedTodo}),
 				removeCompletedTodosButton: new Button({
 					'label': "Supprimer les tâches terminées"
 				}),
@@ -123,9 +123,9 @@ define([
 			//addTodo form
 			$.addTodoLabel.placeAt($.addTodoForm);
 			$.addButton.placeAt($.addTodoForm);
-			this._append($.addTodoForm);
+			this._placeComponent($.addTodoForm);
 			//todos lists
-			this._append($.todoListsContainer.addChildren([
+			this._placeComponent($.todoListsContainer.addChildren([
 				//active todos
 				$.activeTodosSection.addChildren([
 					$.activeTodoTitle,

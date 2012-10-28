@@ -49,6 +49,9 @@ define([
 	});
 
 	return declare([DomComponent,_WithDijit], {
+		domAttrs: {
+			'class': "todo"
+		},
 
 		constructor: function(params){
 			this.disabled = false;
@@ -81,10 +84,10 @@ define([
 		_render: function(){
 			this.inherited(arguments);
 			//place components
-			this._append(this._components.checkWidget);
-			this._append(this._components.labelWidget);
-			this._append(this._components.dueDateButton);
-			this._append(this._components.dueDateWidget);
+			this._placeComponent(this._components.checkWidget);
+			this._placeComponent(this._components.labelWidget);
+			this._placeComponent(this._components.dueDateButton);
+			this._placeComponent(this._components.dueDateWidget);
 
 		},
 		
