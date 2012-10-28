@@ -14,6 +14,7 @@ define([
 
 	return declare([DomComponent, _Dom], {
 		componentClass: null,
+		componentDomAttrs: null,
 		
 		constructor: function() {
 			this._presenter = new ListPresenter();
@@ -30,7 +31,8 @@ define([
 		_addItem: function(item, id) {
 			//create
 			var cmp = new this.componentClass({
-				value: item
+				value: item,
+				domAttrs: this.componentDomAttrs
 			});
 			//register component
 			this._addComponent(cmp, id);

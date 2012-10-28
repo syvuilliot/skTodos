@@ -34,9 +34,9 @@ define([
 		
 		_addItem: function(item, id) {
 			//create components
-			var containerCmp = domConstruct.create("div");
+			var containerCmp = domConstruct.create("div", this.componentDomAttrs);
 			var cmp = new this.componentClass({
-				value: item
+				value: item,
 			});
 			var removableCmp = new Button({label: "Supprimer"});
 			//register components
