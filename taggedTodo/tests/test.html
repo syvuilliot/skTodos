@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="../../../dijit/themes/claro/claro.css" />
+    <meta charset="utf-8">
+    <title>Todo component test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="SK">
+
+  </head>
+
+<body class="claro">
+    <script data-dojo-config="async: false"
+        src="../../../dojo/dojo.js">
+    </script>
+
+    <script>
+		require([
+			'sktodos/taggedTodo/TaggedTodo',
+            "skTodos/model/Todo",
+            "skTodos/model/Tag",
+            "skTodos/model/TodoTagRelation",
+		], function(TaggedTodo, Todo, Tag, TodoTagRelation){
+			window.todo1 = new Todo({label: "Faire les courses"}).save();
+            window.urgentTag = new Tag({label: "urgent"}).save();
+            window.coolTag = new Tag({label: "cool"}).save();
+            window.persoTag = new Tag({label: "perso"}).save();
+            window.proTag = new Tag({label: "pro"}).save();
+            todo1.add("tag", urgentTag).save();
+            todo1.add("tag", coolTag).save();
+
+			var todoEditor = window.todoEditor = new TaggedTodo({
+                tags: Tag.query(),
+                value: todo1,
+            });
+
+            document.body.appendChild(todoEditor.domNode);
+
+            var todoEditor2 = window.todoEditor2 = new TaggedTodo({
+                value: todo1,
+                tags: Tag.query(),
+            });
+            document.body.appendChild(todoEditor2.domNode);
+
+            console.assert(todo1===todoEditor.get("value") , "If we set a Todo instance on todoEditor, it does not create a new one");
+
+
+
+		});
+	</script>
+</body>
+</html>
