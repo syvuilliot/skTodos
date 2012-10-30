@@ -99,7 +99,10 @@ define([
 					type: 'submit'
 				}),
 				completedTodos: new List({itemConfig: TodoEditor}),
-				activeTodos: new RemovableList({itemConfig: TaggedTodo}),
+				activeTodos: new RemovableList({itemConfig: {
+					constructor: TaggedTodo,
+					tags: Tag.query(),
+				}}),
 				removeCompletedTodosButton: new Button({
 					'label': "Supprimer les tâches terminées"
 				}),
