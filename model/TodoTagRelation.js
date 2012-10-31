@@ -2,7 +2,10 @@ define([
 	"SkFramework/model/Model",
 	'./Tag',
 	'./Todo',
-], function(Model, Tag, Todo){
+	'dojo/store/Memory',
+	'dojo/store/Observable',
+	"SkFramework/store/ChainableQuery",
+], function(Model, Tag, Todo, Memory, Observable, Chainable){
 	window.TodoTagRelation = Model.extend("TodoTagRelation");
 	
 	TodoTagRelation.addRelationTo(Tag, {
@@ -20,36 +23,56 @@ define([
 	
 		
 	Tag.prototype._todosGetter = function(){
-		var transform = function(item){
-			return item.get("todo");
-		};
-		var relQueryResult = this.get("todosRelations");
-		var results = relQueryResult.map(transform);
-		results.observe = function(callback) {
-			var relCallback = function(item, from, to) {
-				callback(transform(item), from, to);
-			};
-			return relQueryResult.observe(relCallback);
-		};
-		return results;
+		var todoTagRelations = this.get("tagsRelations");
+		var todos = Chainable(Observable(new Memory()));
+		todoTagRelations.forEach(function(todoTagRelation){
+			todos.put(todoTagRelation.get("todo"));
+		});
+		todoTagRelations.observe(function(todoTagRelation, from, to){
+			if (to < 0) {
+				todos.remove(todoTagRelation.get("todo").getIdentity());
+			} 
+			if (from < 0) {
+				todos.put(todoTagRelation.get("todo"));
+			}
+		});
+		return todos.query();
 	};
 
 	Tag.prototype._todoAdder = function(todo, options){
-		options = options || {};
-		options.tag = this;
-		options.todo = todo;
-		return new TodoTagRelation(options).save();
+		if(this.get("todos").get(todo.getIdentity()) === undefined) {
+			options = options || {};
+			options.tag = this;
+			options.todo = todo;
+			return new TodoTagRelation(options).save();
+		}
 	};
 	
 
 	Todo.prototype._tagsGetter = function(){
-		return this.get("tagsRelations").map(function(item){return item.get("tag");});
+		var todoTagRelations = this.get("tagsRelations");
+		var tags = Chainable(Observable(new Memory()));
+		todoTagRelations.forEach(function(todoTagRelation){
+			tags.put(todoTagRelation.get("tag"));
+		});
+		todoTagRelations.observe(function(todoTagRelation, from, to){
+			if (to < 0) {
+				tags.remove(todoTagRelation.get("tag").getIdentity());
+			} 
+			if (from < 0) {
+				tags.put(todoTagRelation.get("tag"));
+			} 
+		});
+		return tags.query();
 	};
 	Todo.prototype._tagAdder = function(tag, options){
-		options = options || {};
-		options.todo = this;
-		options.tag = tag;
-		return new TodoTagRelation(options).save();
+		//in this case, where the intermediary model is transparent, we don't want to have many relations between one todo and one tag => a tag can only be set once on a todo
+		if(this.get("tags").get(tag.getIdentity()) === undefined) {
+			options = options || {};
+			options.todo = this;
+			options.tag = tag;
+			return new TodoTagRelation(options).save();
+		}
 	};
 
 	var oldDelete = Todo.prototype.delete;
