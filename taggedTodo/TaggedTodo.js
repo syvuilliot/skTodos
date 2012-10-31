@@ -8,8 +8,9 @@ define([
 		"../list/List",
 		"../removableList/List",
 		"dijit/form/ComboBox",
-		"dojo/store/Memory",
-		"dojo/store/Observable",
+		'dojo/store/Memory',
+		'dojo/store/Observable',
+		"SkFramework/store/ChainableQuery",
 ], function(
 		declare,
 		domConstruct,
@@ -21,7 +22,8 @@ define([
 		RemovableList,
 		ComboBox,
 		Memory,
-		Observable
+		Observable,
+		Chainable
 	){
 
 	var Presenter = declare([PresenterBase], {
@@ -30,13 +32,52 @@ define([
 		_valueSetter: function(value){
 			//TODO: convert value to an instance of Todo if necesary
 			var todo = this.value = value;
-			this.set("todo", todo);
 			this.set("todoTags", todo.get("tags"));
-
+			this.createRemainingTagsStore();
 		},
 		_tagsSetter: function(value){
-			this.tags = value;
-			this.set("remainingTagsStore", value);
+			this.tags = value; //collection
+			this.createRemainingTagsStore();
+		},
+		createRemainingTagsStore: function(){
+			//process for maintaining the list of all tags except those already linked to the todo
+			var allTags = this.get("tags");
+			var todoTags = this.get("todoTags");
+			if (allTags && todoTags){
+				//create an empty collection
+				var remainingTagsStore = Chainable(Observable(new Memory()));
+				//add existing tags
+				allTags.forEach(function(tag){
+					remainingTagsStore.put(tag);
+				});
+				//update the new collection based on tags observation
+				allTags.observe(function(tag, from, to){
+					if (from < 0){
+						remainingTagsStore.put(tag);
+					}
+					if (to < 0){
+						remainingTagsStore.remove(tag.getIdentity());
+					}
+				});
+				//remove already linked tags
+				todoTags.forEach(function(tag){
+					remainingTagsStore.remove(tag.getIdentity());
+				});
+				//update the new collection based on tags observation
+				todoTags.observe(function(tag, from, to){
+					if (from < 0){
+						//when a tag is linked to the todo, remove it from remaining tags
+						remainingTagsStore.remove(tag.getIdentity());
+					}
+					if (to < 0){
+						//when a tag is unlinked to the todo, add it to remaining tags
+						remainingTagsStore.put(tag);
+					}
+				});
+				//finally expose it
+				this.set("remainingTagsStore", remainingTagsStore);
+
+			}
 		},
 		tagLabelSubmited: function(){
 			var label = this.get("tagLabel");
