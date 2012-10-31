@@ -47,6 +47,12 @@ define([
 			return new TodoTagRelation(options).save();
 		}
 	};
+	Tag.prototype._todoRemover = function(todo){
+		TodoTagRelation.query({tag: this, todo: todo}).forEach(function(todoTagRelation){
+			todoTagRelation.delete();
+		});
+	};
+
 	
 
 	Todo.prototype._tagsGetter = function(){
@@ -73,6 +79,11 @@ define([
 			options.tag = tag;
 			return new TodoTagRelation(options).save();
 		}
+	};
+	Todo.prototype._tagRemover = function(tag){
+		TodoTagRelation.query({tag: tag, todo: this}).forEach(function(todoTagRelation){
+			todoTagRelation.delete();
+		});
 	};
 
 	var oldDelete = Todo.prototype.delete;

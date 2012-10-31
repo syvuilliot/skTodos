@@ -5,6 +5,7 @@ define([
 		'SkFramework/component/Presenter',
 		'SkFramework/utils/binding',
 		"../todo/TodoEditor",
+		"../list/List",
 		"../removableList/List",
 		"dijit/form/ComboBox",
 		"dojo/store/Memory",
@@ -16,6 +17,7 @@ define([
 		PresenterBase,
 		binding,
 		TodoEditor,
+		List,
 		RemovableList,
 		ComboBox,
 		Memory,
@@ -24,49 +26,13 @@ define([
 
 	var Presenter = declare([PresenterBase], {
 		tagLabel: "",
-		//this solution for maintening a list of tags not already linked to a todo is not robust
-/*		constructor: function(){
-			this.remainingTagsStore = Observable(new Memory());
-			this.own(
-				new binding.ObservableQueryResult(this, this, {
-					sourceProp: "tags",
-					addMethod: "addRemainingTag",
-					removeMethod: "removeRemainingTag",
-				}),
-				new binding.ObservableQueryResult(this, this, {
-					sourceProp: "todoTags",
-					addMethod: "removeRemainingTag",
-					removeMethod: "addRemainingTag",
-				})
-			);
-		},
 
-		addRemainingTag: function(tag){
-			this.remainingTagsStore.put(tag);
-		},
-		removeRemainingTag: function(tag){
-			this.remainingTagsStore.remove(tag.id);
-		},
-*/
 		_valueSetter: function(value){
 			//TODO: convert value to an instance of Todo if necesary
 			var todo = this.value = value;
 			this.set("todo", todo);
 			this.set("todoTags", todo.get("tags"));
 
-			//**** temporary
-			function tags2string(tags){
-				return tags.length ? tags.reduce(function(tagsString, tag){
-					return tagsString+tag.get("label")+", ";
-				}, ""): "";
-			}
-			var tagsList = todo.get("tags");
-			this.set("tagsString", tags2string(tagsList));
-			//recompute string for each change
-			tagsList.observe(function(){
-				this.set("tagsString", tags2string(todo.get("tags")));
-			}.bind(this));
-			//***** temporary
 		},
 		_tagsSetter: function(value){
 			this.tags = value;
@@ -82,10 +48,14 @@ define([
 					tag = new Tag({label: label}).save();
 				}
 				//add it to the todo
-				this.get("value").add("tag", tag).save();
+				this.get("value").add("tag", tag);
 				//reset tagLabel
 				this.set("tagLabel", "");
 			}
+		},
+		removeTagHandler: function(ev){
+			var tag = ev.item;
+			this.get("value").remove("tag", tag);
 		}
 
 
@@ -98,7 +68,23 @@ define([
 			this._presenter = new Presenter();
 			this._addComponents({
 				todoEditor: new TodoEditor(),
-				tagList: domConstruct.create("div"),
+				tagList: new RemovableList({
+					itemConfig: {
+						constructor: declare([DomComponent],{
+							value: null,
+							tagLabel: "",
+							_bind: function(){
+								this.own(new binding.Stateful2InnerHtml(this, this.domNode, {
+									sourceProp: "tagLabel",
+								}))
+							},
+							_valueSetter: function(tag){
+								this.value = tag;
+								this.set("tagLabel", tag.get("label"));
+							}
+						}),
+					},
+				}),
 				tagPicker: new ComboBox({
 					searchAttr: "label",
 					store: new Memory(), //since a store is mandatory at creation
@@ -117,8 +103,9 @@ define([
 				new binding.Value(this._presenter, this._components.todoEditor, {
 					sourceProp: "value", targetProp: "value",
 				}),
-				new binding.Stateful2InnerHtml(this._presenter, this._components.tagList, {
-					sourceProp: "tagsString",
+				new binding.Value(this._presenter, this._components.tagList, {
+					sourceProp: "todoTags",
+					targetProp: "value",
 				}),
 				new binding.ValueSync(this._presenter, this._components.tagPicker, {
 					sourceProp: "tagLabel",
@@ -131,7 +118,12 @@ define([
 				new binding.Event(this._components.tagPicker, this._presenter, {
 					event: "blur",
 					method: "tagLabelSubmited",
+				}),
+				new binding.Event(this._components.tagList, this._presenter, {
+					event: "remove",
+					method: "removeTagHandler",
 				})
+
 			);
 		},
 	});
