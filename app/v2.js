@@ -3,8 +3,8 @@ define([
     'SkFramework/component/DomComponent',	'SkFramework/component/_WithDomNode',	'SkFramework/component/_WithDijit', 'SkFramework/component/_Container',
     'SkFramework/component/Presenter',
     'SkFramework/utils/binding',
-    '../todo/TodoEditor',
-    '../taggedTodo/TaggedTodo',
+    '../newTodo/NewTodo',
+    '../todo/TodoEditor',	'../taggedTodo/TaggedTodo',
     '../list/List',	'../removableList/List',
     '../fixtures/todos',
 	"../model/Todo",
@@ -16,8 +16,8 @@ define([
 	DomComponent,							_WithDom,								_WithDijit, _Container,
 	PresenterBase,
 	binding,
-	TodoEditor,
-	TaggedTodo,
+	NewTodo,
+	TodoEditor,				TaggedTodo,
 	List,			RemovableList,
     todosFixtures,
     Todo,
@@ -54,10 +54,10 @@ define([
 
 		},
 		createTodo: function(){
-			var label = this.get("newTodoLabel");
-			if (label) { //only create a todo if label is not empty
-				this.addTodo({label: label, checked: false});
-				this.set("newTodoLabel", "");
+			var todo = this.get("newTodo");
+			if (todo) { //only create a todo if label is not empty
+				this.addTodo(todo);
+				this.set("newTodo", {label: ""});
 			}
 		},
 		removeTodo: function(todo) {
@@ -89,15 +89,7 @@ define([
 				//old: activeTodosSection: domConstruct.create("section", {class: "todo-list"}),
 				activeTodosSection: new ContainerComponent({domTag:"section", domAttrs:{class: "todo-list"}}),
 				completedTodosSection: new ContainerComponent({domTag:"section", domAttrs:{class: "todo-list completed"}}),
-				addTodoForm: new Form({ 'class':'new-todo' }),
-				addTodoLabel: new TextBox({
-					name: 'label',
-					placeHolder: "Add new task ..."
-				}),
-				addButton: new Button({
-					label: "+",
-					type: 'submit'
-				}),
+				addTodoForm: new NewTodo(),
 				completedTodos: new List({itemConfig: TodoEditor}),
 				activeTodos: new RemovableList({itemConfig: {
 					constructor: TaggedTodo,
@@ -109,14 +101,9 @@ define([
 				activeTodoTitle: domConstruct.create('h2'),
 				completedTodoTitle: domConstruct.create("h2"),
 			});
-			
-			this._components.addTodoForm.on('submit', function(ev) {
-				ev.preventDefault();
-			});
 
 			//load data
 			this.set("todos", todosFixtures);
-
 		},
 
 		_render: function() {
@@ -124,8 +111,6 @@ define([
 			var $ = this._components;
 
 			//addTodo form
-			$.addTodoLabel.placeAt($.addTodoForm);
-			$.addButton.placeAt($.addTodoForm);
 			this._placeComponent($.addTodoForm);
 			//todos lists
 			this._placeComponent($.todoListsContainer.addChildren([
@@ -145,13 +130,13 @@ define([
 
 		_bind: function() {
 			this.own(
-				new binding.ValueSync(this._presenter, this._components.addTodoLabel, {
-					sourceProp: "newTodoLabel",
-					targetProp: "value",
-				}),
 				new binding.Event(this._components.addTodoForm, this._presenter, {
 					event: "submit",
-					method: "createTodo",
+					method: "createTodo"
+				}),
+				new binding.ValueSync(this._components.addTodoForm, this._presenter, {
+					sourceProp: "value",
+					targetProp: "newTodo"
 				}),
 				new binding.Click(this._components.removeCompletedTodosButton, this._presenter, {
 					method: "removeCompletedTodos",
