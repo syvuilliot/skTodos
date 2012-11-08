@@ -38,7 +38,7 @@ define([
 			var cmp = this._buildComponent(this.itemConfig, {
 				value: item,
 			});
-			var removableCmp = new Button({label: "X"});
+			var removableCmp = new Button({label: "Supprimer"});
 			//register components
 			this._addComponent(containerCmp, id+"container");
 			this._addComponent(cmp, id);

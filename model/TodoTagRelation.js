@@ -4,7 +4,7 @@ define([
 	'./Todo',
 ], function(Model, Tag, Todo){
 
-	Model.addMany2ManyRelation({
+	return Model.addMany2ManyRelation({
 		sourceModel: Todo,
 		targetModel: Tag,
 		sourceAddRemoveName: "tag",

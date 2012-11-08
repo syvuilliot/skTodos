@@ -24,11 +24,40 @@
             src="../dojo/dojo.js"></script>
     <script>
         require([
-            'skTodos/app/v2'
+            'skTodos/app/v2',
+            'skTodos/model/Todo',
+            'skTodos/model/Tag',
+            'skTodos/model/TodoTagRelation',
+            './fixtures/todos.js', // is that a good practice to use relative path ? but it works !
+            'skTodos/fixtures/tags',
+            'skTodos/fixtures/todo-tag-relations',
         ], function(
-            App
+            App,
+            Todo,
+            Tag,
+            TodoTagRelation,
+            todosFixtures,
+            tagsFixtures,
+            todoTagRelationsFixtures
         ) {
-            window.app = new App();
+                
+            //data loading
+            todosFixtures.forEach(function(item){
+                Todo.put(new Todo(item));
+            });
+            tagsFixtures.forEach(function(item){
+                Tag.put(new Tag(item));
+            });
+            todoTagRelationsFixtures.forEach(function(item){
+                TodoTagRelation.put(new TodoTagRelation(item));
+            });
+
+
+            // app starting
+            window.app = new App({
+                todos: Todo.query(),
+                tags: Tag.query(),
+            });
             document.body.appendChild(app.domNode);
         });
 	</script>
