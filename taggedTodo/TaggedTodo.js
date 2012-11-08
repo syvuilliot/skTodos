@@ -114,6 +114,9 @@ define([
 			this._addComponents({
 				todoEditor: new TodoEditor(),
 				tagList: new RemovableList({
+					domAttrs: {
+						'class': 'tag-list'
+					},
 					itemConfig: {
 						constructor: declare([DomComponent],{
 							value: null,
