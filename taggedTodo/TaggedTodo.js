@@ -4,6 +4,7 @@ define([
 		'SkFramework/component/DomComponent',	'SkFramework/component/_WithDomNode', "SkFramework/component/_WithDijit",
 		'SkFramework/component/Presenter',
 		'SkFramework/utils/binding',
+		'skTodos/model/Tag',
 		"../todo/TodoEditor",
 		"../list/List",
 		"../removableList/List",
@@ -17,6 +18,7 @@ define([
 		DomComponent, _WithDom, _WithDijit,
 		PresenterBase,
 		binding,
+		Tag,
 		TodoEditor,
 		List,
 		RemovableList,
@@ -28,6 +30,7 @@ define([
 
 	var Presenter = declare([PresenterBase], {
 		tagLabel: "",
+		remainingTagsStore: new Memory(), // to prevent error on the combobox which needs a store
 
 		_valueSetter: function(value){
 			//TODO: convert value to an instance of Todo if necesary
@@ -83,10 +86,11 @@ define([
 			var label = this.get("tagLabel");
 			if (label){
 				//get existing tag by label
-				var tag = Tag.query({label: label})[0];
+				var tag = this.get("tags").query({label: label})[0];
 				//or create a new one
 				if (!tag) {
-					tag = new Tag({label: label}).save();
+					tag = new Tag({label: label});
+					this.get("tags").put(tag);
 				}
 				//add it to the todo
 				this.get("value").add("tag", tag);
@@ -110,9 +114,6 @@ define([
 			this._addComponents({
 				todoEditor: new TodoEditor(),
 				tagList: new RemovableList({
-					domAttrs: {
-						'class': 'tag-list'
-					},
 					itemConfig: {
 						constructor: declare([DomComponent],{
 							value: null,
@@ -131,7 +132,7 @@ define([
 				}),
 				tagPicker: new ComboBox({
 					searchAttr: "label",
-					store: new Memory(), //since a store is mandatory at creation
+					store: this._presenter.remainingTagsStore, //since a store is mandatory at creation
 				}),
 			});
 		},

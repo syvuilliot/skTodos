@@ -6,10 +6,8 @@ define([
     '../todo/TodoEditor',
     '../taggedTodo/TaggedTodo',
     '../list/List',	'../removableList/List',
-    '../fixtures/todos',
-	"../model/Todo",
-	"../model/Tag",
-	"../model/TodoTagRelation",
+	"skTodos/model/Todo",
+	"skTodos/model/Tag",
 	"dijit/form/Form",	"dijit/form/Button",	"dijit/form/TextBox",
 ], function(
 	declare,				domConstruct,
@@ -19,39 +17,49 @@ define([
 	TodoEditor,
 	TaggedTodo,
 	List,			RemovableList,
-    todosFixtures,
     Todo,
     Tag,
-    TodoTagRelation,
     Form,				Button,					TextBox
 ) {
 
-	var urgentTag = new Tag({label: "urgent"}).save();
-
 	var Presenter = declare([PresenterBase], {
 		_todosSetter: function(value){
-			//create an observable collection of Todo instances
-			//TODO: only do it when it is necessary otherwise use the value directly
-			var todosStore = this.todosStore = Todo;
-			if (value && value.forEach){
-				value.forEach(function(value){
-					this.addTodo(value);
+			//create an observable collection of Todo instances if the provided value is not already one
+			if (!value.observe){
+				this.todosStore = Todo;
+				value.forEach(function(item){
+					var todo = item instanceof Todo ? item : new Todo(item);
+					this.todosStore.put(todo);
 				}.bind(this));
+			} else {
+				this.todosStore = value;
 			}
-			this.set("activeTodos", todosStore.query({checked: false}));
-			this.set("completedTodos", todosStore.query({checked: true}));
+			this.set("activeTodos", this.todosStore.query({checked: false}));
+			this.set("completedTodos", this.todosStore.query({checked: true}));
+		},
+		_tagsSetter: function(value){
+			//create an observable collection of Tag instances if the provided value is not already one
+			// when Tag will not be also a collection, we will have to do :
+			// this.tagStore = new Collection({itemConstructor: Tag, items: fixtures});
+			// each item in items will be converted to a Tag instance if necessary
+			if (!value.observe){
+				this.tagsStore = Tag;
+				value.forEach(function(item){
+					var tag = item instanceof Tag ? item : new Tag(item);
+					this.tagsStore.put(tag);
+				}.bind(this));
+			} else {
+				this.tagsStore = value;
+			}
 		},
 		addTodo: function(value){
 			var todo = new Todo(value);
 			this.todosStore.put(todo);
+			//observe each todo, so we don't have to call save on them
 			todo.watch(function(){
 				this.todosStore.put(todo);
 			}.bind(this));
 			//TODO: remove watch handler when todo is removed from store and when a new store is created
-
-			//just for test
-			todo.add("tag", urgentTag).save();
-
 		},
 		createTodo: function(){
 			var label = this.get("newTodoLabel");
@@ -81,7 +89,7 @@ define([
 		},
 		constructor: function(params) {
 			//create internal machinery
-			this._presenter = new Presenter();
+			this._presenter = new Presenter({tags: params.tags}); //we need to give manually the params required at presenter creation time
 
 			//register components
 			this._addComponents({
@@ -101,7 +109,7 @@ define([
 				completedTodos: new List({itemConfig: TodoEditor}),
 				activeTodos: new RemovableList({itemConfig: {
 					constructor: TaggedTodo,
-					tags: Tag.query(),
+					tags: this._presenter.tagsStore.query(), //this only works if tagStore is known at creation time and doesn't change after
 				}}),
 				removeCompletedTodosButton: new Button({
 					'label': "Supprimer les tâches terminées"
@@ -113,10 +121,6 @@ define([
 			this._components.addTodoForm.on('submit', function(ev) {
 				ev.preventDefault();
 			});
-
-			//load data
-			this.set("todos", todosFixtures);
-
 		},
 
 		_render: function() {
