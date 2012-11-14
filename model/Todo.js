@@ -1,6 +1,7 @@
 define([
 	"SkFramework/model/Model",
-], function(Model){
+	"SkFramework/store/Sync",
+], function(Model, Syncable){
 	
 	window.Todo = Model.extend("Todo", {
 		_checkedGetter: function() {
@@ -18,7 +19,15 @@ define([
 		        this.label = value;
 		    }
 		},
+	}, {
+		sync: function(query){
+			return this.store.sync(query);
+		}
 	});
+
+	//store: Syncable(Model.initNewStore(), new GoogleStore()),
+	Todo.initNewStore();
+
 
 	return Todo;
 });
