@@ -1,8 +1,15 @@
 define([
+	"dojo/Deferred",
+	"dojo/when",
 	"SkFramework/model/Model",
+	"dojo/store/Memory",
+	"SkFramework/store/ChainableQuery",
+	"SkFramework/store/PersistableMemory",
+	"dojo/store/Observable",
+	"SkFramework/store/SimpleQueryEngineGet",
 	"SkFramework/store/Sync",
 	"skTodos/store/GoogleJsonRest",
-], function(Model, Syncable, GoogleStore){
+], function(Deferred, when, Model, Memory, Chainable, Persistable, Observable, SimpleQueryEngineGet, Syncable, GoogleStore){
 	
 	window.Todo = Model.extend("Todo", {
 		_checkedGetter: function() {
@@ -22,20 +29,27 @@ define([
 		},
 	}, {
 		sync: function(query){
-			return this.store.sync(query);
+			when(this.authenticate(), function(){
+				this.store.sync(query)
+			}.bind(this));
 		},
 		authenticate: function(){
-            gapi.client.setApiKey('AIzaSyCj1J8O-T61hBkTfMwYnvL9WZsbidbMLF8');
-            gapi.auth.authorize({
-                client_id: '9770186770',
-                scope: 'https://www.googleapis.com/auth/tasks',
-                immediate: true,
-            }, function() {
-			    var token = gapi.auth.getToken();
-                Todo.store.remoteStore.accessToken = token.access_token;
-                console.log("authenticated");
-            }.bind(this));
-
+			if (! gapi.auth.getToken()){
+				var deferred = new Deferred();
+	            gapi.client.setApiKey('AIzaSyCj1J8O-T61hBkTfMwYnvL9WZsbidbMLF8');
+	            gapi.auth.authorize({
+	                client_id: '9770186770',
+	                scope: 'https://www.googleapis.com/auth/tasks',
+	                immediate: false,
+	            }, function() {
+	                googleTasks.accessToken = gapi.auth.getToken().access_token;
+	                console.log("authenticated");
+	                deferred.resolve();
+	            });
+	            return deferred.promise;
+	        } else {
+	        	return true;
+	        }
 		}
 	});
 
@@ -67,7 +81,16 @@ define([
 
 	});
 
-	Todo.store = Syncable(Todo.initNewStore(), googleTasks);
+	//Todo.store = Syncable(Todo.initNewStore(), googleTasks); //can not do that since Chainable wrapper need to be at the end
+	Todo.store = Chainable(Syncable(Observable(Persistable(new Memory({
+		queryEngine: SimpleQueryEngineGet,
+	}), {
+		storageKey: "TodoStore",
+		getConstructor: function(){
+			return Todo;
+		},
+	})), googleTasks));
+
 
 
 	return Todo;
