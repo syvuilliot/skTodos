@@ -33,7 +33,7 @@ define([
 		},
 		syncTodos: function(ev){
 			//TODO: allow for specifiyng the sync query
-			var query = {};
+			var query = {updatedMin:"2012-07-04T12:00:00.000Z"};
 			Todo.sync(query);
 
 		},
