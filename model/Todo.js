@@ -86,6 +86,7 @@ define([
 		queryEngine: SimpleQueryEngineGet,
 	}), {
 		storageKey: "TodoStore",
+		autoSave: true,
 		getConstructor: function(){
 			return Todo;
 		},
