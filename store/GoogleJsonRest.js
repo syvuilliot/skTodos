@@ -1,5 +1,5 @@
 define([
-	'dojo/_base/declare',	'dojo/_base/xhr', 'dojo/_base/Deferred',
+	'dojo/_base/declare',	'dojo/request/xhr', 'dojo/_base/Deferred',
 	'dojo/store/JsonRest'
 ], function(
 	declare,				xhr,			Deferred,
@@ -19,13 +19,11 @@ define([
 			//		The object in the store that matches the given id.
 			var headers = {
 				'Authorization': 'Bearer ' + this.accessToken,
-				"Content-Type": "application/json",
-				"Accept": this.accepts
+				'X-Requested-With': null
 			};
 
 			var def = new Deferred();
-			xhr("GET", {
-				url:this.target + id,
+			xhr(this.target + id, {
 				handleAs: "json",
 				headers: headers
 			}).then(function(item){
@@ -79,15 +77,15 @@ define([
 		},
 		query: function(query, options) {
 			headers = {
-				'Authorization': 'Bearer ' + this.accessToken
+				'Authorization': 'Bearer ' + this.accessToken,
+				'X-Requested-With': null
 			};
 			
-			var results = xhr("GET", {
-				url: this.target,
+			var results = xhr(this.target, {
 				handleAs: "json",
-				content: query,
+				data: query,
 				headers: headers
-			});
+			}, true);
 			
 			var that = this;
 			results.forEach = function(callback) {
