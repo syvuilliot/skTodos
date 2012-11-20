@@ -7,7 +7,7 @@ define([
     'skTodos/model/Todo',
     'skTodos/model/Tag',
     'skTodos/model/TodoTagRelation',
-    './fixtures/todos.js', // is that a good practice to use relative path ? but it works !
+    '../fixtures/todos', // is that a good practice to use relative path ? but it works !
     'skTodos/fixtures/tags',
     'skTodos/fixtures/todo-tag-relations',
 ], function(

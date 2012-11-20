@@ -17,14 +17,44 @@
     <![endif]-->
 
     <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    
+    <script>
+
+	curl = {
+		packages: {
+			curl: { path: '../curl/src/curl/'},
+			dojo: { path: '../dojo' },
+			dijit: { path: '../dijit' },
+			dojox: { path: '../dojox' },
+			lodash: { path: '../lodash' },
+			skTodos: { path: '.' },
+			SkFramework: { path: '../SkFramework' },
+			frb: {
+				path: '../frb',
+				config: {
+					moduleLoader: 'curl/loader/cjsm11'
+				}
+			},
+			collections: {
+				path: '../collections',
+				config: {
+					moduleLoader: 'curl/loader/cjsm11'
+				}
+			}
+		},
+		preloads: [
+			'curl/shim/dojo16'
+		]
+	};
+
+	</script>
   </head>
 
 <body class="sk">
     <script src="https://apis.google.com/js/client.js"></script>
-    <script data-dojo-config="async: true"
-            src="../dojo/dojo.js"></script>
+    <script src="../curl/src/curl.js"></script>
     <script>
-        require(['skTodos/app/v3'], function(App) {
+        curl(['app/v3'], function(App) {
             window.app = new App();
             document.body.appendChild(app.domNode);
         });
